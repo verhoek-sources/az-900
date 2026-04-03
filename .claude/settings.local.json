@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash:*)",
+      "Bash(xargs cat:*)",
+      "Bash(find:*)",
+      "Bash(cmd.exe /c \"where node\")",
+      "Bash(cmd.exe:*)",
+      "Bash(code:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(node:*)",
+      "Bash(mkdir -p /tmp/az900-test)",
+      "Bash(cp C:/Code/Boskalis/temp/az900/index.html /tmp/az900-test/)",
+      "Bash(cp C:/Code/Boskalis/temp/az900/questions.js /tmp/az900-test/)",
+      "Read(//tmp/**)",
+      "WebSearch",
+      "Bash(python3 /tmp/parse_questions.py)",
+      "Bash(start:*)",
+      "Bash(powershell -Command \"Compress-Archive -Path index.html,questions.js -DestinationPath az900-quiz.zip -Force\")",
+      "Bash(cat \"C:/Code/Boskalis/temp/az900/.superpowers/brainstorm/\"*/state/server-info)",
+      "Bash(winget --version)",
+      "Bash(winget install:*)",
+      "Read(//c/ProgramData/**)",
+      "Read(//c/Program Files/**)",
+      "Bash(find /c -name \"nvm.exe\")",
+      "Bash(/c/Users/coek/AppData/Local/nvm/nvm.exe install:*)",
+      "Bash(/c/Users/coek/AppData/Local/nvm/nvm.exe use:*)",
+      "Bash(/c/Users/coek/AppData/Local/nvm/v24.14.1/node.exe:*)",
+      "Bash(sort -t'\"' -k2)",
+      "Bash(uniq -c -f1)",
+      "Bash(grep:*)",
+      "Bash(echo \"Exit: $?\")",
+      "Bash(echo \"Lines with double-space after module colon: $?\")",
+      "Bash(uniq -f1)",
+      "Bash(C:/Users/coek/AppData/Local/nvm/v24.14.1/node.exe:*)",
+      "Bash(powershell:*)"
+    ]
+  }
+}
