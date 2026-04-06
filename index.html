@@ -45,6 +45,9 @@
       .azure-icon { font-size: 38px; margin-bottom: 8px; }
       .app-header h1 { font-size: 1.5rem; }
       .app-header .tagline { font-size: 0.9rem; }
+      /* Quiz meta: badge gets its own full-width row on mobile */
+      .quiz-meta { flex-wrap: wrap; gap: 6px; }
+      .topic-badge { width: 100%; text-align: center; border-radius: 8px; padding: 6px 14px; font-size: 0.8rem; }
     }
 
     /* ── Cards ───────────────────────────────── */
@@ -347,6 +350,97 @@
       white-space: nowrap;
     }
     .study-item-link:hover { text-decoration: underline; }
+
+    /* ── Brainstorm screen ───────────────────────── */
+    .brainstorm-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .brainstorm-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+    }
+    .btn-back {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+    }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--blue); background: #EBF4FF; }
+    .upload-zone-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+    .upload-zone-text { color: var(--muted); font-size: 0.95rem; }
+    .upload-zone-text strong { color: var(--blue); }
+    .brainstorm-image-preview { position: relative; margin-bottom: 16px; }
+    .brainstorm-image-preview img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+      max-height: 400px;
+      object-fit: contain;
+      background: #f0f0f0;
+    }
+    .btn-clear-image {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.55);
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-clear-image:hover { background: rgba(0,0,0,0.8); }
+    .brainstorm-notes-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .brainstorm-textarea {
+      width: 100%;
+      min-height: 160px;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--card);
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+    .brainstorm-textarea:focus { outline: none; border-color: var(--blue); }
+    .brainstorm-actions { display: flex; gap: 10px; margin-top: 12px; }
+    .brainstorm-actions .btn { flex: 1; margin-top: 0; }
+    .brainstorm-saved-msg { color: var(--green); font-size: 0.85rem; text-align: center; margin-top: 8px; min-height: 20px; }
   </style>
 </head>
 <body>
@@ -366,6 +460,7 @@
           <span class="stat-value" id="total-count">—</span>
         </div>
         <button type="button" class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+        <button type="button" class="btn btn-secondary" onclick="openBrainstorm()">&#128161; Brainstorm</button>
       </div>
 
       <div class="card hidden" id="history-section">
@@ -452,6 +547,58 @@
 
       <button type="button" class="btn btn-primary" onclick="startQuiz()">Try Again</button>
       <button type="button" class="btn btn-secondary" onclick="goHome()">Home</button>
+    </div>
+  </div>
+
+  <!-- ══ BRAINSTORM SCREEN ════════════════════════════════════════ -->
+  <div id="screen-brainstorm" class="screen hidden">
+    <div class="container">
+      <div class="brainstorm-header">
+        <button type="button" class="btn-back" onclick="goHome()">&#8592; Back</button>
+        <h2>&#128161; Brainstorm</h2>
+      </div>
+
+      <div class="card">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:16px;">
+          Upload a screenshot or diagram to brainstorm around it, then add your notes below.
+        </p>
+
+        <!-- Upload zone (visible by default; hidden when an image is loaded) -->
+        <div class="upload-zone" id="upload-zone"
+             onclick="document.getElementById('brainstorm-file-input').click()"
+             ondragover="brainstormDragOver(event)"
+             ondragleave="brainstormDragLeave(event)"
+             ondrop="brainstormDrop(event)">
+          <span class="upload-zone-icon">&#128247;</span>
+          <div class="upload-zone-text">
+            <strong>Click to upload</strong> or drag &amp; drop an image here<br>
+            <span style="font-size:0.8rem;">PNG, JPG, GIF, WebP</span>
+          </div>
+        </div>
+        <input type="file" id="brainstorm-file-input" accept="image/*" style="display:none" onchange="brainstormFileSelected(event)">
+
+        <!-- Image preview (hidden until image loaded) -->
+        <div class="brainstorm-image-preview hidden" id="brainstorm-preview">
+          <img id="brainstorm-img" src="" alt="Uploaded brainstorm image">
+          <button type="button" class="btn-clear-image" onclick="clearBrainstormImage()" title="Remove image">&#215;</button>
+        </div>
+
+        <!-- Show upload zone button when image is displayed -->
+        <button type="button" class="btn btn-secondary hidden" id="btn-add-image"
+                style="margin-bottom:16px;"
+                onclick="showUploadZone()">&#128247; Replace image</button>
+
+        <label class="brainstorm-notes-label" for="brainstorm-textarea">Notes &amp; ideas</label>
+        <textarea class="brainstorm-textarea" id="brainstorm-textarea"
+                  placeholder="Write your thoughts, questions, or ideas here…"
+                  oninput="brainstormNotesChanged()"></textarea>
+
+        <div class="brainstorm-actions">
+          <button type="button" class="btn btn-primary" onclick="saveBrainstorm()">&#128190; Save notes</button>
+          <button type="button" class="btn btn-secondary" onclick="clearBrainstorm()">&#128465; Clear all</button>
+        </div>
+        <div class="brainstorm-saved-msg hidden" id="brainstorm-saved-msg">Notes saved!</div>
+      </div>
     </div>
   </div>
 
@@ -1031,6 +1178,98 @@
       initHome();
       showScreen('screen-home');
     });
+
+    // ── Brainstorm ─────────────────────────────────────────────────
+    const BRAINSTORM_NOTES_KEY = 'az900-brainstorm-notes';
+    const BRAINSTORM_AUTO_SAVE_MS = 1500;
+    let brainstormSaveTimer = null;
+    let savedMsgHideTimer = null;
+
+    function openBrainstorm() {
+      showScreen('screen-brainstorm');
+      // Restore saved notes
+      const saved = localStorage.getItem(BRAINSTORM_NOTES_KEY) || '';
+      document.getElementById('brainstorm-textarea').value = saved;
+      // Always show upload zone initially (image is never persisted across sessions)
+      showUploadZone();
+      hideSavedMsg();
+    }
+
+    function showUploadZone() {
+      document.getElementById('upload-zone').classList.remove('hidden');
+      document.getElementById('btn-add-image').classList.add('hidden');
+    }
+
+    function brainstormFileSelected(event) {
+      const file = event.target.files && event.target.files[0];
+      if (file) loadBrainstormImage(file);
+      // Reset input so the same file can be re-selected
+      event.target.value = '';
+    }
+
+    function brainstormDragOver(event) {
+      event.preventDefault();
+      document.getElementById('upload-zone').classList.add('drag-over');
+    }
+
+    function brainstormDragLeave(event) {
+      document.getElementById('upload-zone').classList.remove('drag-over');
+    }
+
+    function brainstormDrop(event) {
+      event.preventDefault();
+      document.getElementById('upload-zone').classList.remove('drag-over');
+      const file = event.dataTransfer.files && event.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) loadBrainstormImage(file);
+    }
+
+    function loadBrainstormImage(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('brainstorm-img');
+        img.src = e.target.result;
+        document.getElementById('upload-zone').classList.add('hidden');
+        document.getElementById('brainstorm-preview').classList.remove('hidden');
+        document.getElementById('btn-add-image').classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearBrainstormImage() {
+      document.getElementById('brainstorm-img').src = '';
+      document.getElementById('brainstorm-preview').classList.add('hidden');
+      document.getElementById('btn-add-image').classList.add('hidden');
+      showUploadZone();
+    }
+
+    function brainstormNotesChanged() {
+      hideSavedMsg();
+      // Auto-save after a short period of inactivity
+      clearTimeout(brainstormSaveTimer);
+      brainstormSaveTimer = setTimeout(saveBrainstorm, BRAINSTORM_AUTO_SAVE_MS);
+    }
+
+    function saveBrainstorm() {
+      clearTimeout(brainstormSaveTimer);
+      const notes = document.getElementById('brainstorm-textarea').value;
+      localStorage.setItem(BRAINSTORM_NOTES_KEY, notes);
+      const msg = document.getElementById('brainstorm-saved-msg');
+      msg.classList.remove('hidden');
+      clearTimeout(savedMsgHideTimer);
+      savedMsgHideTimer = setTimeout(hideSavedMsg, 2000);
+    }
+
+    function clearBrainstorm() {
+      if (!confirm('Clear all notes and image?')) return;
+      document.getElementById('brainstorm-textarea').value = '';
+      localStorage.removeItem(BRAINSTORM_NOTES_KEY);
+      clearBrainstormImage();
+      hideSavedMsg();
+    }
+
+    function hideSavedMsg() {
+      document.getElementById('brainstorm-saved-msg').classList.add('hidden');
+    }
   </script>
 </body>
 </html>
