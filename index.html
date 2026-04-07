@@ -359,6 +359,9 @@
       white-space: nowrap;
     }
     .study-item-link:hover { text-decoration: underline; }
+
+    /* ── Resume info ─────────────────────────────────────────────── */
+    .resume-info { color: var(--muted); font-size: 0.85rem; text-align: center; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -378,6 +381,10 @@
           <span class="stat-value" id="total-count">—</span>
         </div>
         <button type="button" class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+        <div id="resume-section" class="hidden">
+          <button type="button" class="btn btn-secondary" onclick="resumeQuiz()" aria-label="Resume Quiz"><span aria-hidden="true">&#9654;</span> Resume Quiz</button>
+          <p class="resume-info" id="resume-info"></p>
+        </div>
       </div>
 
       <div class="card hidden" id="history-section">
@@ -486,6 +493,7 @@
       'Azure Management & Governance':   '30–35%'
     };
     const HISTORY_KEY    = 'az900-quiz-history';
+    const SESSION_KEY    = 'az900-quiz-session';
     const PASS_THRESHOLD = 0.70;
 
     const MODULE_URL = {
@@ -510,10 +518,11 @@
     const DOMAIN_ORDER = ['Cloud Concepts', 'Azure Architecture & Services', 'Azure Management & Governance'];
 
     // ── State ──────────────────────────────────────────────────────
-    let shuffled    = [];
-    let currentIdx  = 0;
-    let userAnswers = [];  // [{ topic, type, module, correct }]
-    let answered    = false;
+    let shuffled        = [];
+    let shuffledIndices = [];
+    let currentIdx      = 0;
+    let userAnswers     = [];  // [{ topic, type, module, correct }]
+    let answered        = false;
 
     // ── Utilities ──────────────────────────────────────────────────
     function shuffle(arr) {
@@ -564,6 +573,38 @@
       }
     }
 
+    // ── Session persistence ────────────────────────────────────────
+    function saveSession() {
+      if (!shuffled.length) return;
+      try {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({
+          shuffledIndices,
+          currentIdx,
+          userAnswers,
+          questionsLength: QUESTIONS.length
+        }));
+      } catch (_) { /* localStorage unavailable */ }
+    }
+
+    function clearSession() {
+      try {
+        localStorage.removeItem(SESSION_KEY);
+      } catch (_) {}
+    }
+
+    function loadSavedSession() {
+      try {
+        const s = JSON.parse(localStorage.getItem(SESSION_KEY));
+        if (!s) return null;
+        if (s.questionsLength !== QUESTIONS.length) return null;
+        if (!Array.isArray(s.shuffledIndices) || !Array.isArray(s.userAnswers)) return null;
+        if (s.currentIdx < 0 || s.currentIdx >= s.shuffledIndices.length) return null;
+        return s;
+      } catch (_) {
+        return null;
+      }
+    }
+
     // ── Home Screen ────────────────────────────────────────────────
     function goHome() {
       initHome();
@@ -572,6 +613,19 @@
 
     function initHome() {
       document.getElementById('total-count').textContent = QUESTIONS.length;
+
+      // Resume section
+      const session       = loadSavedSession();
+      const resumeSection = document.getElementById('resume-section');
+      if (session) {
+        resumeSection.classList.remove('hidden');
+        const answeredCount = session.userAnswers.length;
+        const total    = session.shuffledIndices.length;
+        document.getElementById('resume-info').textContent =
+          `Question ${session.currentIdx + 1} of ${total} · ${answeredCount} answered`;
+      } else {
+        resumeSection.classList.add('hidden');
+      }
 
       const history     = loadHistory();
       const histSection = document.getElementById('history-section');
@@ -683,10 +737,12 @@
 
     // ── Quiz Screen ────────────────────────────────────────────────
     function startQuiz() {
-      shuffled    = shuffle(QUESTIONS);
+      shuffledIndices = shuffle([...Array(QUESTIONS.length).keys()]);
+      shuffled    = shuffledIndices.map(i => QUESTIONS[i]);
       currentIdx  = 0;
       userAnswers = [];
       answered    = false;
+      clearSession();
       document.getElementById('live-scores').classList.add('hidden');
       const focusBar = document.getElementById('focus-bar');
       focusBar.classList.add('hidden');
@@ -697,6 +753,30 @@
       document.getElementById('module-toggle').classList.remove('hidden');
       initModulePanel();
       showScreen('screen-quiz');
+      renderQuestion();
+    }
+
+    function resumeQuiz() {
+      const session = loadSavedSession();
+      if (!session) { startQuiz(); return; }
+
+      shuffledIndices = session.shuffledIndices;
+      shuffled    = shuffledIndices.map(i => QUESTIONS[i]);
+      currentIdx  = session.currentIdx;
+      userAnswers = session.userAnswers;
+      answered    = false;
+
+      document.getElementById('live-scores').classList.add('hidden');
+      const focusBar = document.getElementById('focus-bar');
+      focusBar.classList.add('hidden');
+      focusBar.classList.remove('on-track');
+      focusBar.textContent = '';
+      document.getElementById('module-panel').classList.remove('hidden');
+      document.getElementById('module-toggle').textContent = '\u25BC Modules';
+      document.getElementById('module-toggle').classList.remove('hidden');
+      initModulePanel();
+      showScreen('screen-quiz');
+      updateLiveScores();
       renderQuestion();
     }
 
@@ -732,6 +812,7 @@
       nextBtn.textContent = currentIdx === total - 1 ? 'See Results' : 'Next Question';
 
       answered = false;
+      saveSession();
     }
 
     function updateLiveScores() {
@@ -954,6 +1035,7 @@
 
     // ── Results Screen ─────────────────────────────────────────────
     function showResults() {
+      clearSession();
       const total   = userAnswers.length;
       const correct = userAnswers.filter(a => a.correct).length;
       const pct     = total > 0 ? correct / total : 0;
