@@ -1,0 +1,21 @@
+{
+  "name": "AZ-900",
+  "short_name": "AZ-900",
+  "description": "AZ-900 Azure Fundamentals Quiz",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F3F4F6",
+  "theme_color": "#0078D4",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
