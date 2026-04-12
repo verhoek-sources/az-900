@@ -824,7 +824,7 @@ const QUESTIONS = [
     answer: 1,
     explanation: "Azure Key Vault helps safeguard cryptographic keys and secrets used by cloud applications. It allows you to securely store and tightly control access to tokens, passwords, certificates, API keys, and other secrets.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/3-describe-authentication-methods"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/8-describe-defense-depth"
   },
   {
     id: 52,
@@ -1430,7 +1430,7 @@ const QUESTIONS = [
     answer: 1,
     explanation: "Azure Key Vault stores secrets, keys, and certificates with full access audit logging. Applications use managed identities to retrieve secrets at runtime—no hardcoding. Secrets can be rotated in Key Vault without redeploying the application.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/3-describe-authentication-methods"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/8-describe-defense-depth"
   },
 
   // ── Azure Management & Governance — EXAM (13 questions) ────────────
