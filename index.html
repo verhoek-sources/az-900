@@ -362,6 +362,17 @@
 
     /* ── Resume info ─────────────────────────────────────────────── */
     .resume-info { color: var(--muted); font-size: 0.85rem; text-align: center; margin-top: 8px; }
+
+    /* ── Flash card answer reveal ────────────────── */
+    .fc-divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .fc-explanation-text { font-size: 0.95rem; line-height: 1.65; color: var(--muted); }
+
+    /* ── Flash card action buttons ───────────────── */
+    .fc-actions { display: flex; gap: 12px; margin-top: 10px; }
+    .fc-btn-got-it { flex: 1; background: var(--green); color: #fff; border-color: var(--green); }
+    .fc-btn-got-it:hover { background: #0a6009; border-color: #0a6009; }
+    .fc-btn-retry { flex: 1; background: transparent; color: var(--amber); border-color: var(--amber); }
+    .fc-btn-retry:hover { background: #FFF8E6; }
   </style>
 </head>
 <body>
@@ -381,6 +392,7 @@
           <span class="stat-value" id="total-count">—</span>
         </div>
         <button type="button" class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
+        <button type="button" class="btn btn-secondary" onclick="startFlashCards()">&#128218; Flash Cards</button>
         <div id="resume-section" class="hidden">
           <button type="button" class="btn btn-secondary" onclick="resumeQuiz()" aria-label="Resume Quiz"><span aria-hidden="true">&#9654;</span> Resume Quiz</button>
           <p class="resume-info" id="resume-info"></p>
@@ -470,6 +482,60 @@
       </div>
 
       <button type="button" class="btn btn-primary" onclick="startQuiz()">Try Again</button>
+      <button type="button" class="btn btn-secondary" onclick="goHome()">Home</button>
+    </div>
+  </div>
+
+  <!-- ══ FLASH CARD SCREEN ════════════════════════════════════════ -->
+  <div id="screen-flashcards" class="screen hidden">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="fc-progress-fill"></div>
+    </div>
+    <div class="container">
+      <div class="quiz-meta">
+        <span class="topic-badge badge-cc" id="fc-topic-badge">Topic</span>
+        <span class="progress-text" id="fc-progress-text">Card 1 / 166</span>
+        <button type="button" class="btn-restart" onclick="confirmFcRestart()">&#8635; Restart</button>
+      </div>
+
+      <div class="card">
+        <p class="question-text" id="fc-question"></p>
+        <div class="hidden" id="fc-answer">
+          <div class="fc-divider"></div>
+          <p class="fc-explanation-text" id="fc-explanation"></p>
+          <a id="fc-learn-link" class="learn-link hidden" href="#" target="_blank" rel="noopener noreferrer">Learn more on Microsoft Learn &#8599;</a>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-secondary" id="fc-reveal-btn" onclick="revealFlashCard()">Reveal Answer</button>
+      <div class="fc-actions hidden" id="fc-actions">
+        <button type="button" class="btn fc-btn-got-it" onclick="markFlashCard(true)">&#10003; Got it</button>
+        <button type="button" class="btn fc-btn-retry" onclick="markFlashCard(false)">&#8635; Try again</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FLASH CARD RESULTS SCREEN ════════════════════════════════ -->
+  <div id="screen-fc-results" class="screen hidden">
+    <div class="container">
+      <div class="app-header" style="padding-bottom:8px">
+        <h1>Flash Cards</h1>
+      </div>
+
+      <div class="card">
+        <div class="score-display">
+          <div class="score-number" id="fc-results-num"></div>
+          <div class="score-detail" id="fc-results-pct"></div>
+        </div>
+        <div class="pass-banner" id="fc-results-banner"></div>
+      </div>
+
+      <div class="card hidden" id="fc-retry-card">
+        <h3>&#8635; Review these</h3>
+        <div id="fc-retry-list"></div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="startFlashCards()">Try Again</button>
       <button type="button" class="btn btn-secondary" onclick="goHome()">Home</button>
     </div>
   </div>
@@ -1119,6 +1185,170 @@
       renderStudyThese();
 
       showScreen('screen-results');
+    }
+
+    // ── Flash Cards ────────────────────────────────────────────────
+    let fcDeck       = [];
+    let fcCurrentIdx = 0;
+    let fcKnown      = [];
+    let fcRetry      = [];
+
+    function startFlashCards() {
+      fcDeck       = shuffle([...QUESTIONS]);
+      fcCurrentIdx = 0;
+      fcKnown      = [];
+      fcRetry      = [];
+      showScreen('screen-flashcards');
+      renderFlashCard();
+    }
+
+    function confirmFcRestart() {
+      if ((fcKnown.length + fcRetry.length) > 0 &&
+          !confirm('Restart flash cards? Current progress will be lost.')) return;
+      startFlashCards();
+    }
+
+    function renderFlashCard() {
+      const q     = fcDeck[fcCurrentIdx];
+      const total = fcDeck.length;
+
+      document.getElementById('fc-progress-fill').style.width =
+        `${((fcCurrentIdx + 1) / total) * 100}%`;
+      document.getElementById('fc-progress-text').textContent =
+        `Card ${fcCurrentIdx + 1} / ${total}`;
+
+      const badge = document.getElementById('fc-topic-badge');
+      badge.textContent = q.topic;
+      badge.className   = 'topic-badge ' + (DOMAIN_BADGE[q.topic] || 'badge-cc');
+
+      document.getElementById('fc-question').textContent = q.question;
+
+      document.getElementById('fc-answer').classList.add('hidden');
+      document.getElementById('fc-learn-link').classList.add('hidden');
+      document.getElementById('fc-reveal-btn').classList.remove('hidden');
+      document.getElementById('fc-actions').classList.add('hidden');
+    }
+
+    function revealFlashCard() {
+      const q = fcDeck[fcCurrentIdx];
+
+      document.getElementById('fc-explanation').textContent = q.explanation;
+
+      const link     = document.getElementById('fc-learn-link');
+      const studyUrl = q.pageUrl || q.learnUrl;
+      if (studyUrl) {
+        link.href = studyUrl;
+        link.classList.remove('hidden');
+      } else {
+        link.classList.add('hidden');
+      }
+
+      document.getElementById('fc-answer').classList.remove('hidden');
+      document.getElementById('fc-reveal-btn').classList.add('hidden');
+      document.getElementById('fc-actions').classList.remove('hidden');
+    }
+
+    function markFlashCard(known) {
+      if (known) {
+        fcKnown.push(fcDeck[fcCurrentIdx]);
+      } else {
+        fcRetry.push(fcDeck[fcCurrentIdx]);
+      }
+      if (fcCurrentIdx < fcDeck.length - 1) {
+        fcCurrentIdx++;
+        renderFlashCard();
+        window.scrollTo(0, 0);
+      } else {
+        showFlashCardResults();
+      }
+    }
+
+    function showFlashCardResults() {
+      const total  = fcDeck.length;
+      const knownN = fcKnown.length;
+      const pct    = total > 0 ? Math.round((knownN / total) * 100) : 0;
+
+      document.getElementById('fc-results-num').textContent = `${knownN} / ${total}`;
+      document.getElementById('fc-results-pct').textContent = `${pct}% mastered`;
+
+      const banner = document.getElementById('fc-results-banner');
+      if (pct >= 70) {
+        banner.textContent = '\u2713 Great work \u2014 keep it up!';
+        banner.className   = 'pass-banner pass';
+      } else {
+        banner.textContent = `\u21BA Study the ${fcRetry.length} card${fcRetry.length === 1 ? '' : 's'} below`;
+        banner.className   = 'pass-banner fail';
+      }
+
+      const retryCard = document.getElementById('fc-retry-card');
+      const retryList = document.getElementById('fc-retry-list');
+      retryList.innerHTML = '';
+
+      if (fcRetry.length === 0) {
+        retryCard.classList.add('hidden');
+      } else {
+        retryCard.classList.remove('hidden');
+        DOMAIN_ORDER.forEach(domain => {
+          (DOMAIN_MODULES[domain] || []).forEach(mod => {
+            const items = fcRetry.filter(q => q.module === mod);
+            if (items.length === 0) return;
+            const header = document.createElement('div');
+            header.className = 'study-module-header';
+            header.textContent = mod;
+            retryList.appendChild(header);
+            items.forEach(q => {
+              const studyUrl = q.pageUrl || q.learnUrl;
+              const row = document.createElement('div');
+              row.className = 'study-item';
+              const text = document.createElement('span');
+              text.className = 'study-item-text';
+              const truncated = q.question.length > 80 ? q.question.slice(0, 80) + '\u2026' : q.question;
+              text.textContent = '\u00B7 ' + truncated;
+              row.appendChild(text);
+              if (studyUrl) {
+                const link = document.createElement('a');
+                link.href = studyUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'study-item-link';
+                link.textContent = '\u2197';
+                row.appendChild(link);
+              }
+              retryList.appendChild(row);
+            });
+          });
+        });
+        // Cards with no module
+        const noModule = fcRetry.filter(q => !q.module);
+        if (noModule.length > 0) {
+          const header = document.createElement('div');
+          header.className = 'study-module-header';
+          header.textContent = 'Other';
+          retryList.appendChild(header);
+          noModule.forEach(q => {
+            const studyUrl = q.pageUrl || q.learnUrl;
+            const row = document.createElement('div');
+            row.className = 'study-item';
+            const text = document.createElement('span');
+            text.className = 'study-item-text';
+            const truncated = q.question.length > 80 ? q.question.slice(0, 80) + '\u2026' : q.question;
+            text.textContent = '\u00B7 ' + truncated;
+            row.appendChild(text);
+            if (studyUrl) {
+              const link = document.createElement('a');
+              link.href = studyUrl;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.className = 'study-item-link';
+              link.textContent = '\u2197';
+              row.appendChild(link);
+            }
+            retryList.appendChild(row);
+          });
+        }
+      }
+
+      showScreen('screen-fc-results');
     }
 
     // ── Init ───────────────────────────────────────────────────────
