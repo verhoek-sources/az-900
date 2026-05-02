@@ -854,6 +854,14 @@ Each layer slows attacks and provides alert information if breached.
 - Manage access to data securely at scale.
 - Features: automated data discovery, sensitive data classification, end-to-end data lineage.
 
+**Microsoft Compliance Manager** (within Purview compliance portal)
+- Tool for managing compliance with industry and government regulations (GDPR, ISO 27001, NIST, etc.).
+- Provides a **compliance score** — a percentage-based measurement of progress toward compliance.
+- Suggests specific **improvement actions** mapped to regulatory controls.
+- Lets teams track assessment progress and monitor compliance status over time.
+- Distinct from the Service Trust Portal (which hosts Microsoft's own audit reports).
+- Distinct from Azure Policy (which enforces Azure resource configurations).
+
 ### Azure Policy
 - Service to create, assign, and manage policies that control or audit resources.
 - Evaluate resources, highlight non-compliant resources, prevent non-compliant resource creation.
