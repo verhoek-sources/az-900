@@ -2702,6 +2702,76 @@ const QUESTIONS = [
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/"
   },
 
+  // ── Catalog gap-fill: Identity, Governance & Management ─────────────
+  {
+    id: 163,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Identity & Security",
+    question: "What is the primary purpose of Microsoft Entra Connect?",
+    options: [
+      "To provide managed domain services (LDAP, Kerberos/NTLM) in Azure without deploying domain controllers",
+      "To synchronize user identities from on-premises Active Directory to Microsoft Entra ID",
+      "To enable single sign-on for external partner users via B2B collaboration",
+      "To manage device registration and compliance policies for corporate endpoints"
+    ],
+    answer: 1,
+    explanation: "Microsoft Entra Connect synchronizes user identities, groups, and other directory objects from an on-premises Active Directory to Microsoft Entra ID. This lets users sign in to both on-premises resources and cloud services with the same credentials, and enables cloud features such as MFA and self-service password reset for on-premises accounts. It is different from Microsoft Entra Domain Services (which provides managed LDAP/Kerberos) and from B2B Collaboration (which handles external partner access).",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/2-describe-directory-services"
+  },
+  {
+    id: 164,
+    type: "exam",
+    topic: "Azure Architecture & Services",
+    module: "Identity & Security",
+    question: "A security team wants to minimize the attack surface of Azure virtual machines that occasionally need administrative access. Instead of keeping RDP and SSH ports permanently open, they want those ports to open only for a specific administrator from their exact source IP, and only for a limited time window — then close automatically. Which Microsoft Defender for Cloud feature enables this?",
+    options: [
+      "Azure Bastion — provides browser-based RDP/SSH access without requiring a public IP on the VM",
+      "Network Security Group (NSG) — defines static inbound allow/deny rules for Azure resources",
+      "Just-in-time (JIT) VM access — opens management ports on demand for approved users for a bounded time window",
+      "Azure Private Link — provides private connectivity to Azure services over the Microsoft backbone"
+    ],
+    answer: 2,
+    explanation: "Just-in-time (JIT) VM access is a Microsoft Defender for Cloud feature that blocks inbound management traffic by default. When an administrator needs access, they request it through Defender for Cloud, which temporarily opens the required port (RDP port 3389 or SSH port 22) only for that administrator's source IP and only for the approved duration — after which it closes automatically. This removes the permanent open-port exposure without impeding legitimate administrative work. Azure Bastion removes the need for a public IP but does not control when ports are open; NSGs use static rules that stay open permanently unless manually changed. JIT policies should be reviewed regularly to ensure approved source IPs and time windows are correctly scoped to minimize the access window.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/9-describe-microsoft-defender-for-cloud"
+  },
+  {
+    id: 165,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Governance & Compliance",
+    question: "What is Microsoft Compliance Manager?",
+    options: [
+      "A feature in the Microsoft Purview compliance portal that provides a compliance score and tracks improvement actions for meeting regulatory standards",
+      "An Azure service that enforces resource configuration policies across all Azure subscriptions",
+      "A monitoring dashboard that tracks security incidents and alerts across Azure resources",
+      "A certification repository where Microsoft publishes its own third-party audit reports"
+    ],
+    answer: 0,
+    explanation: "Microsoft Compliance Manager is a feature in the Microsoft Purview compliance portal that helps organizations manage compliance with regulatory standards (such as GDPR, ISO 27001, NIST). It calculates a compliance score based on completed improvement actions, recommends specific controls mapped to regulatory requirements, and lets teams track assessment progress over time. It is distinct from Azure Policy (which governs Azure resource configurations), Microsoft Defender for Cloud (security posture), and the Service Trust Portal (which hosts Microsoft's own audit reports).",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/2-describe-purpose-microsoft-purview"
+  },
+  {
+    id: 166,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Resource Management",
+    question: "What is Copilot in Azure?",
+    options: [
+      "An autonomous agent that automatically scales, patches, and manages Azure resources without administrator input",
+      "A natural language AI assistant embedded in Azure that helps administrators understand and manage their Azure environment",
+      "A compliance monitoring service that continuously audits Azure resources against Azure Policy definitions",
+      "A code generation tool used exclusively for authoring ARM templates and Bicep files"
+    ],
+    answer: 1,
+    explanation: "Copilot in Azure is a Microsoft AI assistant integrated into the Azure portal. It allows administrators to describe tasks or ask questions in natural language — for example, asking how to configure a service, troubleshoot an issue, or understand a resource's state — and receive contextual guidance. It is an assistant, not an autonomous automation engine: administrators should validate its recommendations and confirm required permissions before applying suggested changes in production environments.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-manage-deploy-azure-resources/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-manage-deploy-azure-resources/2-describe-interacting-azure-portal"
+  },
+
   // ── Azure Arc & File Movement Tools — catalog gap-fill ──────────────
   {
     id: 161,
