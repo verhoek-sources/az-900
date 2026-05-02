@@ -1296,26 +1296,7 @@
             header.className = 'study-module-header';
             header.textContent = mod;
             retryList.appendChild(header);
-            items.forEach(q => {
-              const studyUrl = q.pageUrl || q.learnUrl;
-              const row = document.createElement('div');
-              row.className = 'study-item';
-              const text = document.createElement('span');
-              text.className = 'study-item-text';
-              const truncated = q.question.length > 80 ? q.question.slice(0, 80) + '\u2026' : q.question;
-              text.textContent = '\u00B7 ' + truncated;
-              row.appendChild(text);
-              if (studyUrl) {
-                const link = document.createElement('a');
-                link.href = studyUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.className = 'study-item-link';
-                link.textContent = '\u2197';
-                row.appendChild(link);
-              }
-              retryList.appendChild(row);
-            });
+            items.forEach(q => retryList.appendChild(createRetryItem(q)));
           });
         });
         // Cards with no module
@@ -1325,30 +1306,35 @@
           header.className = 'study-module-header';
           header.textContent = 'Other';
           retryList.appendChild(header);
-          noModule.forEach(q => {
-            const studyUrl = q.pageUrl || q.learnUrl;
-            const row = document.createElement('div');
-            row.className = 'study-item';
-            const text = document.createElement('span');
-            text.className = 'study-item-text';
-            const truncated = q.question.length > 80 ? q.question.slice(0, 80) + '\u2026' : q.question;
-            text.textContent = '\u00B7 ' + truncated;
-            row.appendChild(text);
-            if (studyUrl) {
-              const link = document.createElement('a');
-              link.href = studyUrl;
-              link.target = '_blank';
-              link.rel = 'noopener noreferrer';
-              link.className = 'study-item-link';
-              link.textContent = '\u2197';
-              row.appendChild(link);
-            }
-            retryList.appendChild(row);
-          });
+          noModule.forEach(q => retryList.appendChild(createRetryItem(q)));
         }
       }
 
       showScreen('screen-fc-results');
+    }
+
+    function createRetryItem(q) {
+      const studyUrl = q.pageUrl || q.learnUrl;
+      const row = document.createElement('div');
+      row.className = 'study-item';
+      const text = document.createElement('span');
+      text.className = 'study-item-text';
+      text.textContent = '\u00B7 ' + truncateQuestion(q.question);
+      row.appendChild(text);
+      if (studyUrl) {
+        const link = document.createElement('a');
+        link.href = studyUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.className = 'study-item-link';
+        link.textContent = '\u2197';
+        row.appendChild(link);
+      }
+      return row;
+    }
+
+    function truncateQuestion(question, maxLength = 80) {
+      return question.length > maxLength ? question.slice(0, maxLength) + '\u2026' : question;
     }
 
     // ── Init ───────────────────────────────────────────────────────
