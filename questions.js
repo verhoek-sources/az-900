@@ -414,7 +414,7 @@ const QUESTIONS = [
     type: "learning",
     topic: "Azure Architecture & Services",
     module: "Identity & Security",
-    question: "What is Azure Active Directory (Azure AD)?",
+    question: "What is Microsoft Entra ID?",
     options: [
       "A directory of Azure resources and their configurations",
       "Microsoft's cloud-based identity and access management service",
@@ -422,7 +422,7 @@ const QUESTIONS = [
       "A virtual network service"
     ],
     answer: 1,
-    explanation: "Azure Active Directory (now Microsoft Entra ID) is Microsoft's cloud-based identity and access management service. It supports multi-factor authentication, single sign-on, and conditional access.",
+    explanation: "Microsoft Entra ID (formerly Azure Active Directory) is Microsoft's cloud-based identity and access management service. It supports multi-factor authentication, single sign-on, and conditional access.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-identity-access-security/2-describe-directory-services"
   },
@@ -843,17 +843,17 @@ const QUESTIONS = [
     type: "learning",
     topic: "Azure Management & Governance",
     module: "Governance & Compliance",
-    question: "What is the purpose of Azure Blueprints?",
+    question: "What is the Service Trust Portal?",
     options: [
-      "To create architectural diagrams of Azure resources",
-      "To define a repeatable set of Azure resources that implement and adhere to standards and requirements",
-      "To manage the deployment of Azure VMs",
-      "To create network topology maps"
+      "A billing and cost management tool for Azure subscriptions",
+      "A portal providing access to Microsoft's audit reports, compliance certifications, and security documentation",
+      "A monitoring dashboard for Azure service health and incidents",
+      "A tool for creating and enforcing Azure governance policies"
     ],
     answer: 1,
-    explanation: "Azure Blueprints enables cloud architects to define a repeatable set of Azure resources implementing organizational standards. It packages ARM templates, RBAC assignments, policies, and resource groups together.",
+    explanation: "The Service Trust Portal (servicetrust.microsoft.com) provides access to Microsoft's audit reports, compliance certifications (such as ISO 27001 and SOC 2), and security documentation. It is the central location for information about how Microsoft cloud services protect customer data and comply with regulations. Sign-in with a Microsoft account is required to access most documents.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/3-describe-purpose-azure-policy"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/6-describe-purpose-service-trust-portal"
   },
   {
     id: 54,
@@ -911,15 +911,15 @@ const QUESTIONS = [
     type: "learning",
     topic: "Azure Management & Governance",
     module: "Governance & Compliance",
-    question: "What is Azure Trust Center?",
+    question: "What is the Microsoft Trust Center?",
     options: [
       "A support portal for Azure technical issues",
-      "A resource that provides information about Microsoft's security, privacy, and compliance practices",
+      "A public resource describing Microsoft's approach to security, privacy, and compliance across all cloud services",
       "A security scanning service for Azure workloads",
       "A centralized dashboard for managing Azure resources"
     ],
     answer: 1,
-    explanation: "Azure Trust Center provides resources and information about Microsoft's commitment to security, privacy, compliance, and transparency across Azure, including compliance certifications and security practices.",
+    explanation: "The Microsoft Trust Center (microsoft.com/trust-center) is a public resource that describes Microsoft's principles, policies, and practices for security, privacy, compliance, and transparency across all Microsoft cloud services — including Azure, Microsoft 365, and Dynamics 365. It provides high-level information about how Microsoft earns and maintains customer trust.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/6-describe-purpose-service-trust-portal"
   },
@@ -1323,7 +1323,7 @@ const QUESTIONS = [
       "Microsoft Entra ID — cloud-based identity with OAuth 2.0 and OpenID Connect",
       "Microsoft Entra Domain Services — managed domain with LDAP and Kerberos/NTLM",
       "Microsoft Entra Connect — synchronizes on-premises AD with Entra ID",
-      "Azure Active Directory B2C — consumer identity management"
+      "Microsoft Entra External ID for customers — consumer-facing identity management"
     ],
     answer: 1,
     explanation: "Microsoft Entra Domain Services provides managed domain services including domain join, LDAP, and Kerberos/NTLM authentication—without deploying or managing domain controllers. Entra ID uses modern protocols (OAuth/OIDC) and doesn't support LDAP or Kerberos natively.",
@@ -1424,7 +1424,7 @@ const QUESTIONS = [
     options: [
       "Azure Storage — store the connection string in a blob",
       "Azure Key Vault — centralized, audited storage for secrets and keys",
-      "Azure Active Directory — identity and access management",
+      "Microsoft Entra ID — identity and access management",
       "Azure Disk Encryption — encrypts VM disks"
     ],
     answer: 1,
@@ -1444,7 +1444,7 @@ const QUESTIONS = [
       "Azure RBAC — assign a custom role that removes delete permissions",
       "Azure Policy with a deny effect — block non-compliant resource configurations",
       "Azure Resource Lock (Delete lock) — prevents deletion even by owners",
-      "Azure Blueprints — define repeatable governance-compliant environments"
+      "Microsoft Purview — data governance and classification solution"
     ],
     answer: 2,
     explanation: "Azure Resource Locks override RBAC permissions—even a subscription Owner cannot delete a resource that has a Delete lock without first removing the lock. RBAC-based deny assignments can be bypassed by owners. Locks are specifically designed to prevent accidental critical-resource deletion.",
@@ -1478,7 +1478,7 @@ const QUESTIONS = [
       "Assign an Azure Policy initiative to each subscription manually",
       "Azure Resource Groups — logical containers for organizing resources",
       "Azure Management Groups — apply governance across multiple subscriptions in a hierarchy",
-      "Azure Blueprints — define repeatable governance artifacts per subscription"
+      "Microsoft Defender for Cloud — security posture management across subscriptions"
     ],
     answer: 2,
     explanation: "Management groups sit above subscriptions. Policies and RBAC assigned to a management group are automatically inherited by all subscriptions under it. This enables consistent governance across all 80 subscriptions from a single policy assignment.",
@@ -1631,7 +1631,7 @@ const QUESTIONS = [
       "Azure Resource Locks — prevent modification or deletion of resources",
       "Azure RBAC deny assignments — restrict specific users from creating resources",
       "Azure Policy with a deny effect — block non-compliant resource deployments",
-      "Azure Blueprints — package governance artifacts for repeatable deployments"
+      "Azure Tags — metadata labels applied to resources for organization and cost tracking"
     ],
     answer: 2,
     explanation: "Azure Policy with a 'deny' effect prevents resource creation when conditions aren't met—such as a missing required tag. RBAC controls WHO can act, not WHAT configurations are allowed. Locks protect existing resources, not new deployments.",
@@ -2079,10 +2079,10 @@ const QUESTIONS = [
       "Azure Policy with an audit effect — flag non-compliant resources without blocking",
       "Azure Policy Initiative — a named group of related policy definitions for a single compliance goal",
       "Azure Management Groups — organize subscriptions to inherit policies",
-      "Azure Blueprints — package policies with ARM templates and RBAC"
+      "Microsoft Purview Compliance Manager — automated compliance assessment tool"
     ],
     answer: 1,
-    explanation: "An Azure Policy Initiative (also called a policy set) groups multiple related policy definitions under a single name. You assign the initiative once and compliance is tracked across all included policies as a whole. The 'Enable Monitoring in Azure Security Center' initiative is a well-known example with 100+ policies.",
+    explanation: "An Azure Policy Initiative (also called a policy set) groups multiple related policy definitions under a single name. You assign the initiative once and compliance is tracked across all included policies as a whole. The 'Enable Microsoft Defender for Cloud monitoring' initiative is a well-known example with 100+ policies.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/3-describe-purpose-azure-policy"
   },
@@ -2147,7 +2147,7 @@ const QUESTIONS = [
       "Azure Policy — enforces resource configuration standards across Azure",
       "Microsoft Defender for Cloud — security posture management and threat protection",
       "Microsoft Purview — unified data governance and classification across clouds and on-premises",
-      "Azure Security Center — monitors and improves security across Azure resources"
+      "Azure Monitor — telemetry collection and analysis for Azure resources"
     ],
     answer: 2,
     explanation: "Microsoft Purview provides unified data governance including automated data discovery, sensitive data classification, and end-to-end lineage across Azure, on-premises, and other clouds (including Amazon S3). Azure Policy governs resource configurations, not the content or classification of data.",
@@ -2631,7 +2631,7 @@ const QUESTIONS = [
       "Terraform — an open-source IaC tool by HashiCorp",
       "Azure Bicep — a domain-specific language that compiles to ARM JSON",
       "Azure CLI — command-line tool for managing resources",
-      "Azure Blueprints — for governance and compliance at scale"
+      "Ansible playbooks — procedural YAML-based automation for creating Azure resources"
     ],
     answer: 1,
     explanation: "Azure Bicep is a domain-specific language (DSL) that compiles down to ARM JSON templates. It offers a cleaner, more concise syntax while using the same Azure Resource Manager engine underneath — making it the natural upgrade path from raw ARM JSON for teams already using ARM templates.",
