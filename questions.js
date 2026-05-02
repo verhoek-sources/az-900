@@ -1711,7 +1711,7 @@ const QUESTIONS = [
   {
     id: 104,
     type: "learning",
-    topic: "Cloud Concepts",
+    topic: "Azure Architecture & Services",
     module: "Storage",
     question: "Which Azure storage service stores large amounts of structured, non-relational data using a key-attribute store?",
     options: [
@@ -2690,5 +2690,41 @@ const QUESTIONS = [
     explanation: "Public Preview features are available for all customers to evaluate and provide feedback, but they are not fully released. They typically operate without a full production SLA, may change before GA, and are not recommended for customer-facing or mission-critical workloads. Only General Availability (GA) services come with full Microsoft support and SLA commitments. Private Preview is even more limited — invitation-only access for early feedback.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/"
+  },
+
+  // ── Azure Arc & File Movement Tools — catalog gap-fill ──────────────
+  {
+    id: 161,
+    type: "exam",
+    topic: "Azure Management & Governance",
+    module: "Resource Management",
+    question: "A company runs servers on-premises, virtual machines on AWS, and resources in Azure. The IT team wants to apply Azure Policy, RBAC, and Azure Monitor consistently across ALL these environments from a single control plane — without migrating the non-Azure workloads. Which Azure service enables this?",
+    options: [
+      "Azure Policy — enforces configuration compliance rules for Azure resources only",
+      "Azure Migrate — discovers, assesses, and migrates on-premises workloads to Azure",
+      "Azure Arc — extends Azure management and governance to any infrastructure, anywhere",
+      "Azure Resource Manager — deploys and manages resources within an Azure subscription"
+    ],
+    answer: 2,
+    explanation: "Azure Arc extends Azure's management capabilities beyond Azure itself to on-premises servers, Kubernetes clusters, and resources on other public clouds (AWS, GCP). It projects non-Azure resources into Azure Resource Manager, enabling consistent governance (Azure Policy, RBAC, Azure Monitor, Defender for Cloud) across hybrid and multicloud environments from a single control plane — no migration required. Azure Policy and ARM only operate on Azure resources natively; Azure Migrate is a one-time assessment and migration tool, not an ongoing management plane.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-manage-deploy-azure-resources/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-manage-deploy-azure-resources/4-describe-azure-arc"
+  },
+  {
+    id: 162,
+    type: "exam",
+    topic: "Azure Architecture & Services",
+    module: "Storage",
+    question: "A DevOps team needs to automate nightly uploads of build artifact files from a Linux CI server to Azure Blob Storage using a shell script. A separate team wants to keep a Windows file server on-premises continuously synchronized with an Azure Files share so that local users can access files with low latency while the authoritative copy lives in Azure. Which tools are the best fit for each requirement, respectively?",
+    options: [
+      "Azure Data Box for both — physical devices support both one-time and continuous transfer scenarios",
+      "Azure Storage Explorer for uploads; Azure File Sync for continuous synchronization",
+      "AzCopy for scripted uploads; Azure File Sync for bidirectional continuous synchronization",
+      "Azure File Sync for both — it handles both scripted copy and continuous sync"
+    ],
+    answer: 2,
+    explanation: "AzCopy is a command-line utility designed for scripted, automatable copy and sync operations with Azure Blob and File Storage — ideal for shell-script-driven CI pipelines. Azure File Sync bidirectionally synchronizes an on-premises Windows Server file share with Azure Files, supports cloud tiering (frequently accessed files cached locally; infrequent files kept only in Azure), and enables multiple on-premises caches. Azure Storage Explorer is a graphical GUI tool — not suitable for headless script automation. Azure Data Box is a physical offline migration device, not suitable for nightly incremental uploads.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/5-identify-azure-data-migration-options"
   }
 ];
