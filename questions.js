@@ -1362,7 +1362,7 @@ const QUESTIONS = [
     answer: 2,
     explanation: "Azure IoT Hub is designed for secure bidirectional communication: device-to-cloud telemetry AND cloud-to-device commands. IoT Central is a simplified SaaS platform built on IoT Hub but doesn't expose the raw bidirectional messaging. IoT Edge runs workloads locally on the device.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/7-describe-application-hosting-options"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/"
   },
   {
     id: 84,
@@ -1810,7 +1810,7 @@ const QUESTIONS = [
     answer: 2,
     explanation: "Azure Machine Learning is specifically designed for building, training, and managing CUSTOM models with experiment tracking, model versioning, and lifecycle management. Azure AI Services provides prebuilt AI capabilities without custom model training.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/7-describe-application-hosting-options"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/"
   },
   {
     id: 110,
@@ -1997,7 +1997,7 @@ const QUESTIONS = [
     answer: 2,
     explanation: "Azure IoT Edge deploys containerized cloud workloads (modules) to run locally on edge devices—directly at the factory floor in this case. This eliminates round-trip latency to the cloud and allows processing close to the data source.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/7-describe-application-hosting-options"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/"
   },
   {
     id: 121,
