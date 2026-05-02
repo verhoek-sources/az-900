@@ -729,17 +729,17 @@ const QUESTIONS = [
     type: "learning",
     topic: "Azure Management & Governance",
     module: "Cost Management",
-    question: "What does the Azure Total Cost of Ownership (TCO) Calculator help with?",
+    question: "What was the purpose of the Azure Total Cost of Ownership (TCO) Calculator before it was retired?",
     options: [
-      "Estimating the cost of specific Azure services",
+      "Estimating the cost of specific Azure services before deployment",
       "Comparing the cost of running workloads on-premises versus in Azure",
       "Calculating the depreciation of existing hardware",
-      "Optimizing current Azure spending"
+      "Optimizing current Azure spending after deployment"
     ],
     answer: 1,
-    explanation: "The TCO Calculator helps you estimate cost savings of migrating to Azure versus running workloads on-premises. It accounts for hardware, software, IT staff, and other costs.",
+    explanation: "The TCO Calculator was designed to estimate cost savings of migrating to Azure by comparing on-premises costs (hardware, software, IT staff, electricity, facilities) with projected Azure costs. It was retired in August 2025. The Azure Pricing Calculator now serves as the primary pre-deployment cost estimation tool, while Azure Migrate's business case assessment provides on-premises-to-Azure cost comparison capabilities.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/4-describe-total-cost-of-ownership-calculator"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/3-describe-azure-pricing-calculator"
   },
   {
     id: 47,
@@ -2654,5 +2654,41 @@ const QUESTIONS = [
     explanation: "ARM templates and Bicep are declarative IaC tools — they define the desired end state of the infrastructure. Deploying the same template to multiple environments guarantees identical configuration and eliminates the manual inconsistencies that come from portal clicks or copy-pasted scripts.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-manage-deploy-azure-resources/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-manage-deploy-azure-resources/5-describe-azure-resource-manager-azure-arm-templates"
+  },
+
+  // ── Azure Service Lifecycle ─────────────────────────────────────────
+  {
+    id: 159,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Governance & Compliance",
+    question: "What are the three main stages of the Azure service lifecycle?",
+    options: [
+      "Alpha, Beta, and Stable",
+      "Private Preview, Public Preview, and General Availability (GA)",
+      "Development, Testing, and Production",
+      "Trial, Standard, and Enterprise"
+    ],
+    answer: 1,
+    explanation: "Azure services progress through three lifecycle stages: (1) Private Preview — available only to invited customers for initial feedback and testing; (2) Public Preview — available to all Azure customers for evaluation, but typically without a full production SLA; (3) General Availability (GA) — fully released with complete Microsoft support and SLA guarantees. Preview features can be explored at preview.portal.azure.com or are flagged '(Preview)' in the Azure portal.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/"
+  },
+  {
+    id: 160,
+    type: "exam",
+    topic: "Azure Management & Governance",
+    module: "Governance & Compliance",
+    question: "A team wants to evaluate a new Azure AI feature that Microsoft has made available to all Azure customers, but the feature is not yet officially released. A manager asks whether they can use it for their customer-facing production workload. What should the team tell the manager?",
+    options: [
+      "Yes — features available to all customers are always fully supported with a production SLA",
+      "No — Public Preview features are for evaluation only; they typically lack a full SLA and should not be used for production workloads without accepting the risk",
+      "Yes — Microsoft always provides full support for any feature listed in the Azure portal",
+      "No — only Private Preview features are available for customer testing; Public Preview features are internal only"
+    ],
+    answer: 1,
+    explanation: "Public Preview features are available for all customers to evaluate and provide feedback, but they are not fully released. They typically operate without a full production SLA, may change before GA, and are not recommended for customer-facing or mission-critical workloads. Only General Availability (GA) services come with full Microsoft support and SLA commitments. Private Preview is even more limited — invitation-only access for early feedback.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/"
   }
 ];
