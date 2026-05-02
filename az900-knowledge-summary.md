@@ -756,7 +756,12 @@ Each layer slows attacks and provides alert information if breached.
 - For information purposes only — nothing is provisioned; no charges incurred.
 - Estimate individual resources, full solutions, or example scenarios.
 - Can account for compute, storage, networking, storage type, access tier, redundancy.
-- Note: **TCO (Total Cost of Ownership) Calculator has been retired.**
+
+**TCO (Total Cost of Ownership) Calculator — RETIRED August 2025**
+- Purpose: compared on-premises costs with projected Azure costs to estimate migration savings.
+- Accounted for: hardware, software, electricity, IT staff, and facilities.
+- Now retired — use **Azure Migrate's business case assessment** for on-premises-to-Azure cost comparison.
+- The concept of TCO comparison (justifying cloud migration with cost analysis) is still testable on AZ-900.
 
 ### Microsoft Cost Management Tool
 - Checks actual resource costs in real time.
@@ -820,6 +825,7 @@ Each layer slows attacks and provides alert information if breached.
 | Concept | Detail |
 |---|---|
 | Pricing Calculator vs. Cost Management | Pricing Calc = estimate BEFORE deployment; Cost Mgmt = track ACTUAL costs after deployment |
+| TCO Calculator (retired) vs. Azure Migrate | TCO Calculator was retired Aug 2025; Azure Migrate's business case assessment now provides on-premises-to-Azure cost comparison |
 | Reservations vs. Savings Plan | Reservations = specific resource type; Savings Plan = hourly spend commitment, flexible resource |
 | Spot VMs | Can be evicted at any time; not for production workloads |
 | Credit alerts threshold | 90% and 100% (EA customers only) |
@@ -890,6 +896,22 @@ Each layer slows attacks and provides alert information if breached.
 
 **Document retention**: available for download for at least **12 months** after publishing.
 
+### Azure Service Lifecycle
+
+Every Azure service progresses through a defined lifecycle before (and after) reaching customers:
+
+**Stages**:
+1. **Private Preview** — Available only to invited/selected customers. Early feedback stage; no production SLA or official support. May have significant limitations or missing features.
+2. **Public Preview** — Open to ALL Azure customers for evaluation. Can be accessed at preview.portal.azure.com or within the Azure portal (labeled "(Preview)"). Typically **no full production SLA**; not recommended for mission-critical workloads. Purpose: broad feedback before GA.
+3. **General Availability (GA)** — Fully released service with complete Microsoft support and an SLA. Recommended for all production workloads.
+4. **Retirement** — Service reaches end-of-life. Microsoft gives advance notice (typically 12 months) before retiring a service and provides migration guidance to alternatives.
+
+**Key exam points**:
+- Public Preview features may be included on the AZ-900 exam if widely used.
+- SLAs apply only to GA services — not to Private or Public Preview.
+- Preview features should never be used for customer-facing production workloads without understanding the risk.
+- The Azure portal flags preview services clearly so users know they are not GA.
+
 ### Tricky Distinctions
 
 | Concept | Detail |
@@ -900,6 +922,7 @@ Each layer slows attacks and provides alert information if breached.
 | Locks override RBAC | Even a subscription owner must remove a lock before deleting/modifying |
 | Microsoft Purview vs. Azure Policy | Purview = data governance/classification; Policy = Azure resource compliance |
 | Service Trust Portal | Compliance documentation — NOT the tool for enforcing policies |
+| Public Preview vs. GA | Public Preview = no full SLA, evaluation only; GA = full support and SLA |
 
 ---
 
@@ -1103,6 +1126,7 @@ Each layer slows attacks and provides alert information if breached.
 | Need to classify and track sensitive data across clouds | Microsoft Purview |
 | Need to read audit reports about Microsoft compliance practices | Service Trust Portal |
 | Need to estimate costs before deploying | Azure Pricing Calculator |
+| Need to compare on-premises costs with Azure costs | Azure Migrate business case assessment (TCO Calculator retired Aug 2025) |
 | Need to track actual costs and set budgets | Microsoft Cost Management |
 | Need to migrate large dataset when network bandwidth is limited | Azure Data Box |
 | Need to assess and migrate on-premises servers to Azure | Azure Migrate |
@@ -1155,4 +1179,6 @@ Each layer slows attacks and provides alert information if breached.
 | Azure free account always-free services | 65+ |
 | Azure free student account credit | $100 for 12 months |
 | Credit alerts thresholds (EA) | 90% and 100% |
+| TCO Calculator retirement date | August 2025 (replaced by Azure Migrate business case) |
+| Service lifecycle stages | Private Preview → Public Preview → GA → (Retirement) |
 | Brazil South pairing | Paired to South Central US (one-direction only) |
