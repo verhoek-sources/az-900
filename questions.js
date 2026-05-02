@@ -338,25 +338,35 @@ const QUESTIONS = [
     id: 22,
     type: "learning",
     topic: "Azure Architecture & Services",
-    module: "Storage",
-    question: "Which Azure service provides a fully managed relational database?",
-    options: ["Azure Cosmos DB", "Azure Table Storage", "Azure SQL Database", "Azure Data Lake"],
-    answer: 2,
-    explanation: "Azure SQL Database is a fully managed relational database service based on Microsoft SQL Server. It handles backups, patching, and high availability automatically.",
-    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/4-describe-azure-storage-services"
+    module: "Core Architecture",
+    question: "What is an Azure region pair?",
+    options: [
+      "Two availability zones within the same Azure region",
+      "Two Azure regions within the same geography, at least 300 miles apart, used for replication and prioritized recovery",
+      "Two Azure subscriptions joined for shared billing purposes",
+      "A primary and secondary load balancer configuration within a VNet"
+    ],
+    answer: 1,
+    explanation: "Azure region pairs consist of two regions in the same geography, separated by at least 300 miles. They enable data residency compliance within the geography, staggered planned maintenance (Azure never updates both regions simultaneously), and prioritized recovery order during large-scale outages. Most regions are paired bidirectionally; Brazil South is an exception, paired one-way to South Central US.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-physical-infrastructure"
   },
   {
     id: 23,
     type: "learning",
-    topic: "Azure Architecture & Services",
-    module: "Storage",
-    question: "Which Azure database service is designed for globally distributed, multi-model NoSQL data?",
-    options: ["Azure SQL Database", "Azure Database for MySQL", "Azure Cosmos DB", "Azure Synapse Analytics"],
-    answer: 2,
-    explanation: "Azure Cosmos DB is Microsoft's globally distributed, multi-model database service. It supports multiple APIs (SQL, MongoDB, Cassandra, Gremlin, Table) and offers single-digit millisecond response times worldwide.",
-    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/4-describe-azure-storage-services"
+    topic: "Cloud Concepts",
+    module: "Cloud Computing",
+    question: "What is Azure VMware Solution?",
+    options: [
+      "A service that automatically converts VMware virtual machines to Azure-native VMs",
+      "A service that lets organizations run their existing VMware workloads natively in Azure with seamless integration",
+      "A monitoring tool for on-premises VMware environments that reports to the Azure portal",
+      "A licensing program for deploying Microsoft software on VMware vSphere"
+    ],
+    answer: 1,
+    explanation: "Azure VMware Solution lets organizations run their existing VMware workloads natively in Azure without re-architecting them. It provides seamless integration and scalability, allowing organizations to extend or migrate their VMware-based private cloud environments to Azure while retaining familiar VMware tools and operational practices.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cloud-compute/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cloud-compute/4-define-cloud-models"
   },
   {
     id: 24,
@@ -1362,7 +1372,7 @@ const QUESTIONS = [
     answer: 2,
     explanation: "Azure IoT Hub is designed for secure bidirectional communication: device-to-cloud telemetry AND cloud-to-device commands. IoT Central is a simplified SaaS platform built on IoT Hub but doesn't expose the raw bidirectional messaging. IoT Edge runs workloads locally on the device.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/12-knowledge-check"
   },
   {
     id: 84,
@@ -1810,7 +1820,7 @@ const QUESTIONS = [
     answer: 2,
     explanation: "Azure Machine Learning is specifically designed for building, training, and managing CUSTOM models with experiment tracking, model versioning, and lifecycle management. Azure AI Services provides prebuilt AI capabilities without custom model training.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/12-knowledge-check"
   },
   {
     id: 110,
@@ -1997,7 +2007,7 @@ const QUESTIONS = [
     answer: 2,
     explanation: "Azure IoT Edge deploys containerized cloud workloads (modules) to run locally on edge devices—directly at the factory floor in this case. This eliminates round-trip latency to the cloud and allows processing close to the data source.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/"
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/12-knowledge-check"
   },
   {
     id: 121,
@@ -2209,37 +2219,37 @@ const QUESTIONS = [
   },
   {
     id: 133,
-    type: "exam",
+    type: "learning",
     topic: "Azure Architecture & Services",
-    module: "Compute & Networking",
-    question: "A company's primary datacenter hosts business-critical applications on virtual machines. They need continuous replication to Azure so that, if the datacenter fails completely, they can fail over to Azure within minutes with minimal data loss. Which Azure service is designed for this disaster recovery scenario?",
+    module: "Core Architecture",
+    question: "Azure services that support availability zones fall into three categories. Which category describes services that are automatically replicated or distributed across zones by the platform — with no zone selection required from the customer?",
     options: [
-      "Azure Backup — managed service for scheduled backups and point-in-time restore",
-      "Azure Migrate — assesses and migrates on-premises workloads to Azure",
-      "Azure Site Recovery — continuously replicates workloads for automated disaster recovery failover",
-      "Azure Data Box — physical device for offline bulk data transfer to Azure"
+      "Zonal services — customer pins the resource to a specific chosen zone (e.g., a VM, managed disk)",
+      "Zone-redundant services — platform automatically replicates or distributes across zones (e.g., ZRS storage)",
+      "Non-regional services — globally available with no region or zone dependency (e.g., Microsoft Entra ID)",
+      "Geo-redundant services — platform replicates data asynchronously to a paired secondary region"
     ],
-    answer: 2,
-    explanation: "Azure Site Recovery (ASR) is a disaster recovery service that continuously replicates on-premises VMs (Hyper-V, VMware) and Azure VMs to a secondary location. In a disaster, workloads fail over automatically. Azure Backup performs scheduled backups for restore scenarios but does not provide continuous replication for rapid failover.",
-    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/3-describe-azure-virtual-machines"
+    answer: 1,
+    explanation: "Zone-redundant services (such as Zone-Redundant Storage) are automatically replicated synchronously across three availability zones by the platform — the customer never selects a zone. Zonal services (VMs, managed disks) are pinned to a specific zone chosen by the customer. Non-regional services (Microsoft Entra ID, Azure Traffic Manager, Azure DNS) have no region or zone requirement and are inherently resilient to zone and region failures.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-physical-infrastructure"
   },
   {
     id: 134,
     type: "exam",
     topic: "Azure Architecture & Services",
-    module: "Compute & Networking",
-    question: "A company needs to centrally back up Azure VMs, SQL Server databases running inside Azure VMs, on-premises Windows servers, and Azure Files shares — all with configurable retention policies and a single management console. Which Azure service provides this?",
+    module: "Core Architecture",
+    question: "A company in North Europe wants a secondary Azure region for disaster recovery that: (1) Microsoft prioritizes for recovery during large-scale outages, (2) never receives planned maintenance updates at the same time as the primary region, and (3) keeps data within Europe for regulatory compliance. Which Azure architectural feature fulfills all three requirements?",
     options: [
-      "Azure Site Recovery — replicates workloads to a secondary site for disaster recovery",
-      "Azure Blob Storage with lifecycle management — automatically tiers blobs to lower-cost storage",
-      "Azure Backup — centralized managed backup service for Azure and on-premises workloads",
-      "Azure File Sync — bidirectionally syncs on-premises file servers with Azure Files"
+      "Availability Zones — physically separate datacenters within the same region",
+      "Azure Region Pairs — two regions in the same geography, at least 300 miles apart, with prioritized recovery and staggered maintenance",
+      "Azure Sovereign Regions — physically isolated Azure instances for government compliance",
+      "Azure Virtual Network Peering — connects VNets across regions for low-latency traffic"
     ],
-    answer: 2,
-    explanation: "Azure Backup is a managed, centralized backup service that protects Azure VMs, SQL/SAP databases in VMs, Azure Files, and on-premises servers (via MARS agent). Backups are stored in a Recovery Services Vault with configurable retention. It is distinct from Site Recovery, which focuses on disaster recovery replication rather than scheduled backup and restore.",
-    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
-    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/3-describe-azure-virtual-machines"
+    answer: 1,
+    explanation: "Azure Region Pairs pair two regions in the same geography (e.g., North Europe with West Europe) at least 300 miles apart. Microsoft prioritizes one region in each pair for recovery during large-scale outages, staggers planned updates so both regions are never updated simultaneously, and keeps data within the same geography for compliance. Availability Zones only protect within a single region and do not satisfy the cross-region DR requirements.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-physical-infrastructure"
   },
   {
     id: 135,
