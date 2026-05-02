@@ -1323,7 +1323,7 @@ const QUESTIONS = [
       "Microsoft Entra ID — cloud-based identity with OAuth 2.0 and OpenID Connect",
       "Microsoft Entra Domain Services — managed domain with LDAP and Kerberos/NTLM",
       "Microsoft Entra Connect — synchronizes on-premises AD with Entra ID",
-      "Microsoft Entra External ID for customers — consumer-facing identity management"
+      "Microsoft Entra External ID — consumer-facing identity management"
     ],
     answer: 1,
     explanation: "Microsoft Entra Domain Services provides managed domain services including domain join, LDAP, and Kerberos/NTLM authentication—without deploying or managing domain controllers. Entra ID uses modern protocols (OAuth/OIDC) and doesn't support LDAP or Kerberos natively.",
@@ -2082,7 +2082,7 @@ const QUESTIONS = [
       "Microsoft Purview Compliance Manager — automated compliance assessment tool"
     ],
     answer: 1,
-    explanation: "An Azure Policy Initiative (also called a policy set) groups multiple related policy definitions under a single name. You assign the initiative once and compliance is tracked across all included policies as a whole. The 'Enable Microsoft Defender for Cloud monitoring' initiative is a well-known example with 100+ policies.",
+    explanation: "An Azure Policy Initiative (also called a policy set) groups multiple related policy definitions under a single name. You assign the initiative once and compliance is tracked across all included policies as a whole. Microsoft provides built-in initiatives such as security benchmark initiatives that bundle hundreds of related policies into a single assignable unit.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/3-describe-purpose-azure-policy"
   },
