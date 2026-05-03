@@ -479,7 +479,7 @@
       </div>
 
       <div class="card">
-        <div class="filter-header" onclick="toggleFilterPanel()" role="button" tabindex="0" aria-expanded="false" id="filter-toggle-btn" onkeydown="if(event.key==='Enter'||event.key===' ')toggleFilterPanel()">
+        <div class="filter-header" onclick="toggleFilterPanel()" role="button" tabindex="0" aria-expanded="false" id="filter-toggle-btn" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFilterPanel();}">
           <span class="filter-header-icon" id="filter-header-icon">&#9658;</span>
           <span class="filter-header-label">Select Modules</span>
           <span class="filter-count-badge" id="filter-count-badge">All</span>
@@ -782,6 +782,12 @@
       const panel = document.getElementById('filter-panel');
       panel.innerHTML = '';
 
+      // Precompute question counts per module in one pass
+      const modQCount = {};
+      for (const q of QUESTIONS) {
+        modQCount[q.module] = (modQCount[q.module] || 0) + 1;
+      }
+
       DOMAIN_ORDER.forEach(domain => {
         const mods  = DOMAIN_MODULES[domain] || [];
         const color = DOMAIN_COLOR[domain] || '#ccc';
@@ -818,7 +824,7 @@
 
         // Module rows
         mods.forEach(mod => {
-          const qCount = QUESTIONS.filter(q => q.module === mod).length;
+          const qCount = modQCount[mod] || 0;
           const mid    = modId(mod);
 
           const row = document.createElement('div');
@@ -1065,9 +1071,11 @@
 
     // ── Quiz Screen ────────────────────────────────────────────────
     function startQuiz() {
-      const pool = getFilteredQuestions();
-      if (pool.length === 0) return;
-      const poolIndices = pool.map(q => QUESTIONS.indexOf(q));
+      if (getFilteredQuestions().length === 0) return;
+      const poolIndices = QUESTIONS.reduce((acc, q, i) => {
+        if (selectedModules.size === ALL_MODULES.length || selectedModules.has(q.module)) acc.push(i);
+        return acc;
+      }, []);
       shuffledIndices = shuffle(poolIndices);
       shuffled    = shuffledIndices.map(i => QUESTIONS[i]);
       currentIdx  = 0;
