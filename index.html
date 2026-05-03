@@ -266,9 +266,8 @@
     .quiz-meta-actions { display: flex; gap: 6px; align-items: center; }
 
     /* ── Quiz navigation (prev / next) ───────────── */
-    .quiz-nav { display: flex; gap: 8px; margin-top: 10px; }
-    .quiz-nav .btn { margin-top: 0; flex: 1; }
-    #prev-btn { flex: 0 0 auto; }
+    .quiz-nav { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .quiz-nav .btn { margin-top: 0; width: 100%; }
 
     /* ── Domain breakdown bars ───────────────── */
     .domain-row { margin-bottom: 22px; }
@@ -586,8 +585,8 @@
       </div>
 
       <div class="quiz-nav">
-        <button type="button" class="btn btn-secondary hidden" id="prev-btn" onclick="prevQuestion()">&#8592; Previous</button>
         <button type="button" class="btn btn-primary hidden" id="next-btn" onclick="nextQuestion()">Next Question</button>
+        <button type="button" class="btn btn-secondary hidden" id="prev-btn" onclick="prevQuestion()">&#8592; Previous</button>
       </div>
 
       <div class="focus-bar hidden" id="focus-bar"></div>
