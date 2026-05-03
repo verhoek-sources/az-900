@@ -314,6 +314,20 @@
     .module-bar-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
     .module-bar-fill  { height: 6px; border-radius: 99px; transition: width 0.4s ease; }
     .module-pct { color: var(--muted); white-space: nowrap; min-width: 32px; text-align: right; }
+    .module-train-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.68rem;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+    .module-train-btn:hover { border-color: var(--blue); color: var(--blue); }
 
     /* ── Focus bar ───────────────────────────────── */
     .focus-bar {
@@ -1039,11 +1053,39 @@
         pctSpan.textContent   = `${p}%`;
       }
 
+      const quizBtn = document.createElement('button');
+      quizBtn.type = 'button';
+      quizBtn.className = 'module-train-btn';
+      quizBtn.textContent = '\u25B6 Quiz';
+      quizBtn.title = `Train quiz: ${mod}`;
+      quizBtn.addEventListener('click', () => trainModule(mod));
+
+      const fcBtn = document.createElement('button');
+      fcBtn.type = 'button';
+      fcBtn.className = 'module-train-btn';
+      fcBtn.textContent = '\uD83D\uDCDA Cards';
+      fcBtn.title = `Train flash cards: ${mod}`;
+      fcBtn.addEventListener('click', () => trainModuleFC(mod));
+
       row.appendChild(nameSpan);
       row.appendChild(scoreSpan);
       row.appendChild(barWrap);
       row.appendChild(pctSpan);
+      row.appendChild(quizBtn);
+      row.appendChild(fcBtn);
       return row;
+    }
+
+    function trainModule(mod) {
+      selectedModules = new Set([mod]);
+      updateFilterUI();
+      startQuiz();
+    }
+
+    function trainModuleFC(mod) {
+      selectedModules = new Set([mod]);
+      updateFilterUI();
+      startFlashCards();
     }
 
     function initModulePanel() {
