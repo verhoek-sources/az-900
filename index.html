@@ -1623,9 +1623,7 @@
       const continueBtn = document.getElementById('btn-continue-main-results');
       if (continueBtn) {
         if (mainQuizState !== null) {
-          const remaining = mainQuizState.shuffled.length - mainQuizState.userAnswers.length;
-          const label = remaining > 0 ? ` (${remaining} left)` : '';
-          continueBtn.textContent = `\u21A9 Continue Main Quiz${label}`;
+          continueBtn.textContent = continueMainQuizLabel();
           continueBtn.classList.remove('hidden');
         } else {
           continueBtn.classList.add('hidden');
@@ -1864,7 +1862,7 @@
     function startRetryQuiz(questions) {
       if (questions.length === 0) return;
       // Save the current main quiz state so the user can return to it after retry
-      if (mainQuizState === null && shuffled.length > 0) {
+      if (mainQuizState === null && userAnswers.length > 0) {
         mainQuizState = {
           shuffled: [...shuffled],
           shuffledIndices: [...shuffledIndices],
@@ -1895,13 +1893,17 @@
       updateContinueMainQuizButton();
       renderQuestion();
     }
+    function continueMainQuizLabel() {
+      if (!mainQuizState) return '\u21A9 Continue Main Quiz';
+      const remaining = mainQuizState.shuffled.length - mainQuizState.userAnswers.length;
+      return `\u21A9 Continue Main Quiz${remaining > 0 ? ` (${remaining} left)` : ''}`;
+    }
+
     function updateContinueMainQuizButton() {
       const btn = document.getElementById('btn-continue-main-quiz');
       if (!btn) return;
       if (mainQuizState !== null) {
-        const remaining = mainQuizState.shuffled.length - mainQuizState.userAnswers.length;
-        const label = remaining > 0 ? ` (${remaining} left)` : '';
-        btn.textContent = `\u21A9 Continue Main Quiz${label}`;
+        btn.textContent = continueMainQuizLabel();
         btn.classList.remove('hidden');
       } else {
         btn.classList.add('hidden');
@@ -1914,8 +1916,8 @@
       shuffledIndices = mainQuizState.shuffledIndices;
       userAnswers     = mainQuizState.userAnswers;
       markedIndices   = mainQuizState.markedIndices;
-      // Resume at the first unanswered question; if all done, show results
-      currentIdx      = Math.min(mainQuizState.userAnswers.length, mainQuizState.shuffled.length - 1);
+      // Resume at the first unanswered question; if all done, showResults handles it
+      currentIdx      = mainQuizState.userAnswers.length;
       mainQuizState   = null;
       answered        = false;
       clearSession();
