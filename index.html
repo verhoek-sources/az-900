@@ -591,6 +591,8 @@
 
       <div class="focus-bar hidden" id="focus-bar"></div>
 
+      <button type="button" class="btn btn-secondary hidden" id="btn-retry-failed-quiz" onclick="retryFailed()">&#8635; Retry Failed Questions</button>
+
       <button type="button" class="btn-module-toggle hidden" id="module-toggle" onclick="toggleModulePanel()">&#9658; Modules</button>
       <div class="module-panel hidden" id="module-panel"></div>
     </div>
@@ -1179,6 +1181,7 @@
       document.getElementById('module-toggle').classList.remove('hidden');
       initModulePanel();
       showScreen('screen-quiz');
+      updateRetryButtonQuiz();
       renderQuestion();
     }
 
@@ -1204,6 +1207,7 @@
       initModulePanel();
       showScreen('screen-quiz');
       updateLiveScores();
+      updateRetryButtonQuiz();
       renderQuestion();
     }
 
@@ -1416,6 +1420,7 @@
       // Show mark for retry button
       document.getElementById('btn-mark-retry').classList.remove('hidden');
       updateMarkButton();
+      updateRetryButtonQuiz();
 
       // Show next button (label already set in renderQuestion)
       document.getElementById('next-btn').classList.remove('hidden');
@@ -1781,6 +1786,7 @@
         markedIndices.add(currentIdx);
       }
       updateMarkButton();
+      updateRetryButtonQuiz();
       saveSession();
     }
 
@@ -1795,6 +1801,19 @@
         btn.textContent = '🔖 Mark for retry';
         btn.classList.remove('marked');
         btn.setAttribute('aria-pressed', 'false');
+      }
+    }
+
+    function updateRetryButtonQuiz() {
+      const pool = buildRetryPool();
+      const btn  = document.getElementById('btn-retry-failed-quiz');
+      if (!btn) return;
+      if (pool.length > 0) {
+        const label = pool.length === 1 ? '1 question' : `${pool.length} questions`;
+        btn.textContent = `\u21BB Retry Failed Questions (${label})`;
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
       }
     }
 
@@ -1843,10 +1862,9 @@
       document.getElementById('module-toggle').classList.remove('hidden');
       initModulePanel();
       showScreen('screen-quiz');
+      updateRetryButtonQuiz();
       renderQuestion();
     }
-
-    // ── Retry failed flash cards ───────────────────────────────────
     function retryFailedCards() {
       if (fcRetry.length === 0) return;
       fcDeck       = shuffle([...fcRetry]);
