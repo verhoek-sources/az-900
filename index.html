@@ -1221,7 +1221,7 @@
       nextBtn.textContent = currentIdx === total - 1 ? 'See Results' : 'Next Question';
 
       // Check whether this question has already been answered
-      const prevAnswer = currentIdx < userAnswers.length ? userAnswers[currentIdx] : null;
+      const prevAnswer = userAnswers[currentIdx] !== undefined ? userAnswers[currentIdx] : null;
 
       if (prevAnswer !== null) {
         // Already answered — restore the answer state for review
