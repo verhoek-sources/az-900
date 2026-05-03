@@ -580,7 +580,7 @@
           <span class="verdict" id="verdict-text"></span>
           <span id="explanation-text"></span>
           <a id="learn-link" class="learn-link hidden" href="#" target="_blank" rel="noopener noreferrer">Learn more on Microsoft Learn ↗</a>
-          <button type="button" id="btn-mark-retry" class="btn-mark-retry hidden" onclick="toggleMarkForRetry()">&#128278; Mark for retry</button>
+          <button type="button" id="btn-mark-retry" class="btn-mark-retry hidden" onclick="toggleMarkForRetry()" aria-pressed="false">&#128278; Mark for retry</button>
         </div>
       </div>
 
@@ -1603,7 +1603,7 @@
       const retryBtn = document.getElementById('btn-retry-failed');
       if (failedPool.length > 0) {
         const label = failedPool.length === 1 ? '1 question' : `${failedPool.length} questions`;
-        retryBtn.textContent = `\u21BA Retry Failed Questions (${label})`;
+        retryBtn.textContent = `\u21BB Retry Failed Questions (${label})`;
         retryBtn.classList.remove('hidden');
       } else {
         retryBtn.classList.add('hidden');
@@ -1740,7 +1740,7 @@
       const retryFcBtn = document.getElementById('btn-retry-fc');
       if (fcRetry.length > 0) {
         const label = fcRetry.length === 1 ? '1 card' : `${fcRetry.length} cards`;
-        retryFcBtn.textContent = `\u21BA Retry these cards (${label})`;
+        retryFcBtn.textContent = `\u21BB Retry these cards (${label})`;
         retryFcBtn.classList.remove('hidden');
       } else {
         retryFcBtn.classList.add('hidden');
@@ -1790,9 +1790,11 @@
       if (markedIndices.has(currentIdx)) {
         btn.textContent = '\u2714 Marked for retry';
         btn.classList.add('marked');
+        btn.setAttribute('aria-pressed', 'true');
       } else {
-        btn.textContent = '\uD83D\uDD16 Mark for retry';
+        btn.textContent = '🔖 Mark for retry';
         btn.classList.remove('marked');
+        btn.setAttribute('aria-pressed', 'false');
       }
     }
 
@@ -1801,10 +1803,16 @@
       const seen = new Set();
       const pool = [];
       userAnswers.forEach((a, i) => {
-        if (!a.correct && !seen.has(i)) { seen.add(i); pool.push(shuffled[i]); }
+        if (!a.correct && !seen.has(i)) {
+          seen.add(i);
+          pool.push(shuffled[i]);
+        }
       });
       markedIndices.forEach(i => {
-        if (!seen.has(i) && shuffled[i]) { seen.add(i); pool.push(shuffled[i]); }
+        if (!seen.has(i) && shuffled[i]) {
+          seen.add(i);
+          pool.push(shuffled[i]);
+        }
       });
       return pool;
     }
