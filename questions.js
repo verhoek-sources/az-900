@@ -2806,5 +2806,308 @@ const QUESTIONS = [
     explanation: "AzCopy is a command-line utility designed for scripted, automatable copy and sync operations with Azure Blob and File Storage — ideal for shell-script-driven CI pipelines. Azure File Sync bidirectionally synchronizes an on-premises Windows Server file share with Azure Files, supports cloud tiering (frequently accessed files cached locally; infrequent files kept only in Azure), and enables multiple on-premises caches. Azure Storage Explorer is a graphical GUI tool — not suitable for headless script automation. Azure Data Box is a physical offline migration device, not suitable for nightly incremental uploads.",
     learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/",
     pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/5-identify-azure-data-migration-options"
+  },
+
+  // ── Support Plans ────────────────────────────────────────────────────
+  {
+    id: 167,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Cost Management",
+    question: "Which Azure support plan is included automatically at no additional cost with every Azure subscription?",
+    options: [
+      "Developer",
+      "Standard",
+      "Basic",
+      "Professional Direct"
+    ],
+    answer: 2,
+    explanation: "The Basic support plan is automatically included with every Azure subscription at no extra cost. It provides access to documentation, whitepapers, support forums, Azure Advisor recommendations, Azure Service Health, and self-help resources — but does not include technical support from Microsoft engineers.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/2-compare-azure-pricing-models"
+  },
+  {
+    id: 168,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Cost Management",
+    question: "What is the key difference between the Developer and Standard Azure support plans?",
+    options: [
+      "Developer includes architecture guidance; Standard does not",
+      "Standard includes 24/7 phone and email support for Severity A and B cases; Developer is limited to business-hours email for Severity C only",
+      "Developer supports production workloads; Standard supports only dev/test environments",
+      "Standard includes a dedicated Technical Account Manager; Developer does not"
+    ],
+    answer: 1,
+    explanation: "The Developer plan (~$29/month) provides business-hours email support for Severity C (minimal business impact) issues only — designed for trial and non-production scenarios. The Standard plan (~$100/month) adds 24/7 phone and email technical support for all severity levels (A, B, and C), making it suitable for production workloads. A dedicated Technical Account Manager is only available with Premier/Unified support.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/2-compare-azure-pricing-models"
+  },
+  {
+    id: 169,
+    type: "exam",
+    topic: "Azure Management & Governance",
+    module: "Cost Management",
+    question: "A financial services company runs mission-critical applications on Azure. They need 24/7 technical support, a guaranteed initial response time of less than one hour for Severity A (critical business impact) incidents, proactive architecture guidance, and access to a designated expert who helps with operational reviews. Which Azure support plan meets all these requirements?",
+    options: [
+      "Basic — included with all Azure subscriptions",
+      "Standard — $100/month; 24/7 technical support",
+      "Professional Direct — ~$1,000/month; faster response times and proactive services",
+      "Developer — business-hours email support for non-production workloads"
+    ],
+    answer: 2,
+    explanation: "Professional Direct (~$1,000/month) provides 24/7 technical support for all severities, with a guaranteed initial response of less than one hour for Severity A critical incidents. It also includes proactive guidance from a ProDirect Delivery Manager, architecture support, operations reviews, and training from Microsoft experts — making it suitable for enterprise production workloads where fast response and guidance are essential. Standard provides 24/7 support but with less aggressive SLAs and no proactive services. Basic and Developer do not support production critical incidents.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/2-compare-azure-pricing-models"
+  },
+  {
+    id: 170,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Cost Management",
+    question: "Which Azure support plans provide 24/7 technical support by phone and email? (Choose the most accurate answer.)",
+    options: [
+      "Basic and Developer",
+      "Developer and Standard",
+      "Standard and Professional Direct",
+      "All paid plans (Developer, Standard, and Professional Direct)"
+    ],
+    answer: 2,
+    explanation: "Standard and Professional Direct both include 24/7 technical support by phone and email for all severity levels. The Developer plan only covers business-hours email support for Severity C issues. The Basic plan includes no technical support from Microsoft engineers — only self-help resources and community forums.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/2-compare-azure-pricing-models"
+  },
+
+  // ── Regions, AZs, and Region Pairs — Comparison ─────────────────────
+  {
+    id: 171,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Core Architecture",
+    question: "What is the minimum distance guarantee between regions in an Azure region pair?",
+    options: [
+      "At least 10 miles",
+      "At least 100 miles",
+      "At least 300 miles",
+      "At least 1,000 miles"
+    ],
+    answer: 2,
+    explanation: "Azure region pairs are designed to be at least 300 miles (approximately 480 km) apart. This physical separation reduces the likelihood that a single natural disaster, power outage, or major civil event would affect both paired regions simultaneously, enabling geo-redundant disaster recovery.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-infrastructure"
+  },
+  {
+    id: 172,
+    type: "exam",
+    topic: "Azure Architecture & Services",
+    module: "Core Architecture",
+    question: "Which statement correctly describes the Brazil South Azure region's region pair relationship?",
+    options: [
+      "Brazil South is paired bidirectionally with Brazil Southeast",
+      "Brazil South is paired in one direction only — with South Central US — and data residency may leave Brazil during failover",
+      "Brazil South has no region pair and relies entirely on availability zones for resiliency",
+      "Brazil South is paired with West Europe to meet GDPR requirements"
+    ],
+    answer: 1,
+    explanation: "Brazil South is an exception to the standard bidirectional pairing model. It is paired one-way with South Central US (in the United States). Because the pair is not bidirectional, during a regional failover from Brazil South, data may be replicated to and stored in South Central US — meaning data residency could move outside Brazil. Organizations with strict Brazilian data sovereignty requirements must plan for this. Other regions like Italy North, Poland Central, and Israel Central also lack traditional pairs and rely on availability zones and geo-redundant storage instead.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-infrastructure"
+  },
+  {
+    id: 173,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Core Architecture",
+    question: "Which of the following is a correct differentiator between Availability Zones and Region Pairs?",
+    options: [
+      "Availability Zones protect against entire region failures; Region Pairs protect against datacenter failures within one region",
+      "Availability Zones are physically separate datacenters within the same region; Region Pairs are two separate Azure regions in the same geography",
+      "Region Pairs require no additional configuration; Availability Zones must be chosen manually for every resource",
+      "Availability Zones replicate data automatically; Region Pairs require explicit geo-redundant storage configuration"
+    ],
+    answer: 1,
+    explanation: "Availability Zones are physically separate datacenters (each with independent power, cooling, networking) within the SAME Azure region, connected by low-latency fiber. They protect against single-datacenter failures. Region Pairs are TWO distinct Azure regions, located at least 300 miles apart in the same geography (e.g., West Europe and North Europe). They protect against region-wide failures and are used for geo-disaster recovery. Both provide resiliency at different scales: AZs = intra-region; Region Pairs = inter-region.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-infrastructure"
+  },
+  {
+    id: 174,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Core Architecture",
+    question: "Which of the following Azure global services does NOT require you to select a specific region when deploying?",
+    options: [
+      "Azure Virtual Machines",
+      "Azure Blob Storage",
+      "Microsoft Entra ID",
+      "Azure SQL Database"
+    ],
+    answer: 2,
+    explanation: "Microsoft Entra ID (formerly Azure AD) is a global service — it does not require region selection during deployment. Other examples of non-regional services include Azure Traffic Manager and Azure DNS. In contrast, Azure Virtual Machines, Blob Storage, and SQL Database are regional services that require you to select a specific Azure region when you create them, because the resource is physically deployed in and bound to that region.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-infrastructure"
+  },
+  {
+    id: 175,
+    type: "exam",
+    topic: "Azure Architecture & Services",
+    module: "Core Architecture",
+    question: "A government agency in the United States needs to store classified workloads on Azure, operated exclusively by screened US personnel and physically isolated from commercial Azure infrastructure. Which Azure offering meets these requirements?",
+    options: [
+      "Standard Azure regions in the US (East US, West US) — US datacenters meet all requirements",
+      "Azure Availability Zones — physically separate datacenters with independent infrastructure",
+      "Azure Government sovereign regions (e.g., US Gov Virginia, US DoD Central) — isolated from commercial Azure",
+      "Azure China regions — operated under separate government partnership"
+    ],
+    answer: 2,
+    explanation: "Azure Government sovereign regions (US DoD Central, US Gov Virginia, US Gov Arizona) are physically and logically isolated from commercial Azure. They are operated exclusively by screened US citizens/nationals, meet strict compliance standards (FedRAMP High, ITAR, DoD SRG IL4/IL5), and have a separate Azure portal (portal.azure.us). They are distinct from standard commercial Azure US regions, which are open to all customers. Azure China regions are separate sovereign regions operated through a partnership with 21Vianet for China-specific regulatory compliance — not US government use.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/5-describe-azure-infrastructure"
+  },
+
+  // ── Pricing & Compute Model Comparisons ─────────────────────────────
+  {
+    id: 176,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Cost Management",
+    question: "What is the primary difference between Azure Reservations and the Azure Savings Plan for Compute?",
+    options: [
+      "Reservations apply only to VMs; Savings Plan applies only to App Service",
+      "Reservations commit to a specific resource type, size, and region; Savings Plan commits to an hourly spend amount and applies flexibly across eligible compute services",
+      "Savings Plan requires a 3-year commitment; Reservations offer only 1-year terms",
+      "Reservations are charged monthly; Savings Plan is paid upfront only"
+    ],
+    answer: 1,
+    explanation: "Azure Reservations require you to commit to a specific resource type, size, and region for 1 or 3 years (e.g., a specific VM SKU in East US). They give the deepest discount for predictable, unchanging workloads. The Azure Savings Plan for Compute commits you to an hourly spend amount (e.g., $5/hour) for 1 or 3 years but flexibly applies that discount across ANY eligible compute service (VMs, Container Instances, App Service, Azure Functions) in any region — ideal when you need compute savings but want flexibility to change resource types or regions.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/2-compare-azure-pricing-models"
+  },
+  {
+    id: 177,
+    type: "exam",
+    topic: "Azure Management & Governance",
+    module: "Cost Management",
+    question: "A startup runs an unpredictable mix of workloads — some are always-on web services, some are short-lived data pipeline jobs that can restart on failure, and some are development environments used only during business hours. They want to optimize cost across all three. What is the BEST combination of pricing options?",
+    options: [
+      "Pay-as-you-go for all workloads — simplest to manage and no commitment risk",
+      "Reservations for always-on services; Spot VMs for fault-tolerant jobs; Pay-as-you-go for dev environments",
+      "Azure Savings Plan for everything — most flexible discount option",
+      "Spot VMs for all workloads — cheapest option available"
+    ],
+    answer: 1,
+    explanation: "The optimal strategy uses each pricing model where it fits best: Reservations (1 or 3-year commit) are ideal for predictable, always-on web services and deliver the deepest discounts. Spot VMs use spare Azure capacity at steep discounts (up to 90%) — perfect for fault-tolerant, interruptible batch jobs that can handle eviction. Pay-as-you-go is best for dev environments with variable schedules where a commitment would waste money. Spot VMs for everything would be wrong because always-on production services cannot tolerate eviction.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-cost-management-azure/2-compare-azure-pricing-models"
+  },
+
+  // ── VM Size Families ─────────────────────────────────────────────────
+  {
+    id: 178,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Compute & Networking",
+    question: "A team needs to run a large in-memory SAP HANA database that requires 12 TB of RAM. Which Azure VM series is designed for this extreme memory requirement?",
+    options: [
+      "B-series — burstable, cost-efficient VMs for variable workloads",
+      "F-series — compute-optimized VMs for CPU-intensive tasks",
+      "M-series — memory-optimized VMs for the largest in-memory databases",
+      "L-series — storage-optimized VMs for high-throughput disk workloads"
+    ],
+    answer: 2,
+    explanation: "The M-series provides VMs with the largest amounts of RAM available in Azure — up to tens of TBs — specifically designed for workloads like SAP HANA, large SQL Server in-memory deployments, and enterprise databases that must hold an entire dataset in RAM. F-series is CPU-focused (high CPU-to-memory ratio). L-series optimizes for high local disk throughput and IOPS. B-series is cost-efficient for burstable workloads but offers modest resources.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/2-virtual-machines"
+  },
+  {
+    id: 179,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Compute & Networking",
+    question: "A developer needs a low-cost Azure VM for a build server that is idle most of the day but occasionally needs to burst to handle CI/CD pipeline jobs. Which VM series is most appropriate?",
+    options: [
+      "N-series — GPU-enabled VMs for AI and graphics rendering",
+      "B-series — burstable, cost-efficient VMs that accumulate CPU credits when idle",
+      "E-series — memory-optimized VMs for in-memory analytics",
+      "M-series — ultra-large memory VMs for enterprise databases"
+    ],
+    answer: 1,
+    explanation: "The B-series (Burstable) VMs are specifically designed for workloads that are mostly idle but occasionally need to burst. They accumulate CPU credits when running below the baseline CPU threshold, and spend those credits when a burst is needed. This makes them cost-efficient for CI/CD build servers, small web servers, and dev/test workloads. N-series VMs include GPUs for AI training and rendering. E-series is memory-heavy for analytics. M-series is for extremely large in-memory databases.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-compute-networking-services/2-virtual-machines"
+  },
+
+  // ── Storage Account Types ────────────────────────────────────────────
+  {
+    id: 180,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Storage",
+    question: "Which Azure storage account type supports the widest range of services (Blob, Queue, Table, and Azure Files) and redundancy options, and is the recommended choice for most scenarios?",
+    options: [
+      "Premium block blobs — for highest performance blob storage",
+      "Premium file shares — for high-throughput SMB/NFS file shares",
+      "Standard general-purpose v2 — supports all storage services and all redundancy options",
+      "Premium page blobs — for unmanaged VM disk scenarios"
+    ],
+    answer: 2,
+    explanation: "Standard general-purpose v2 (GPv2) is the recommended storage account type for most scenarios. It supports all four Azure storage services (Blob including Data Lake Gen2, Queue, Table, and Azure Files) and all six redundancy options (LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS). Premium account types (block blobs, file shares, page blobs) are for specialized high-performance scenarios and are limited in both supported services and redundancy options — for example, Premium block blobs only support LRS and ZRS.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/2-azure-storage-accounts"
+  },
+  {
+    id: 181,
+    type: "exam",
+    topic: "Azure Architecture & Services",
+    module: "Storage",
+    question: "A team is building a financial application that writes thousands of small transactions per second to Azure Blob Storage and requires single-digit millisecond read latency. They are evaluating storage account types. Which account type should they choose, and what redundancy options are available to them?",
+    options: [
+      "Standard general-purpose v2 with LRS — best combination of features and performance",
+      "Premium block blobs — optimized for high transaction rates and low latency; supports LRS and ZRS only",
+      "Premium file shares — designed for high-throughput NFS workloads; supports LRS and ZRS",
+      "Standard general-purpose v2 with ZRS — zone-redundant storage for financial workloads"
+    ],
+    answer: 1,
+    explanation: "Premium block blobs storage accounts use solid-state drives (SSDs) and are designed specifically for workloads with high transaction rates, small object sizes, and low-latency requirements — exactly matching a financial transaction system. The trade-off is that Premium accounts support only LRS and ZRS for redundancy (no geo-redundancy options like GRS or RA-GZRS). Premium file shares are for high-performance SMB/NFS file sharing scenarios. Standard GPv2 accounts use spinning disks and are optimized for storage cost over latency.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/2-azure-storage-accounts"
+  },
+
+  // ── Service Lifecycle / Preview vs GA ───────────────────────────────
+  {
+    id: 182,
+    type: "learning",
+    topic: "Azure Management & Governance",
+    module: "Governance & Compliance",
+    question: "Which Azure service lifecycle stage is open to ALL Azure customers for evaluation but typically does NOT carry a full production SLA and is not recommended for mission-critical workloads?",
+    options: [
+      "General Availability (GA) — fully released with complete Microsoft support",
+      "Private Preview — limited to invited customers only",
+      "Public Preview — open to all customers for evaluation; limited SLA",
+      "Retirement — end-of-life stage with advance notice given"
+    ],
+    answer: 2,
+    explanation: "Public Preview is the stage when a service or feature is made available to ALL Azure customers so they can evaluate it and provide feedback. Public Preview services typically do not carry a full production SLA, may change significantly before reaching GA, and should not be used for customer-facing or mission-critical workloads. They are accessible via preview.portal.azure.com or flagged as '(Preview)' in the Azure portal. Private Preview is earlier and invitation-only. General Availability (GA) is when the service is fully released with a production SLA and complete Microsoft support.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-features-tools-azure-for-governance-compliance/"
+  },
+
+  // ── Azure Free Account Comparison ───────────────────────────────────
+  {
+    id: 183,
+    type: "learning",
+    topic: "Azure Architecture & Services",
+    module: "Core Architecture",
+    question: "What distinguishes the Azure free student account from the standard Azure free account?",
+    options: [
+      "The student account provides more free product categories than the standard free account",
+      "The student account includes a $100 credit valid for 12 months and does not require a credit card; the standard free account requires a credit card and provides a $200 credit for the first 30 days",
+      "The student account expires after 30 days; the standard free account expires after 12 months",
+      "The standard free account includes free developer tools; the student account does not"
+    ],
+    answer: 1,
+    explanation: "The Azure free student account is designed for students and provides $100 in Azure credits valid for 12 months, access to certain free products for 12 months, and free developer tools — and crucially, does NOT require a credit card to sign up. The standard Azure free account requires a credit card for identity verification, provides $200 in credit for the first 30 days, and then free access to popular products for 12 months plus 65+ always-free services. Both offer 12-month free access to popular services, but the student account has a longer-lasting credit and no credit card requirement.",
+    learnUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/",
+    pageUrl: "https://learn.microsoft.com/en-us/training/modules/describe-core-architectural-components-of-azure/3-azure-accounts"
   }
 ];

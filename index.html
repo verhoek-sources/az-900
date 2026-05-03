@@ -363,6 +363,82 @@
     /* ── Resume info ─────────────────────────────────────────────── */
     .resume-info { color: var(--muted); font-size: 0.85rem; text-align: center; margin-top: 8px; }
 
+    /* ── Module filter (home screen) ────────────────────────────── */
+    .filter-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      padding: 2px 0;
+    }
+    .filter-header-icon { color: var(--muted); font-size: 0.75rem; transition: transform 0.2s; }
+    .filter-header-icon.open { transform: rotate(90deg); }
+    .filter-header-label { font-weight: 600; font-size: 0.95rem; flex: 1; }
+    .filter-count-badge {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .filter-count-badge.partial { border-color: var(--blue); color: var(--blue); }
+    .filter-quick-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .filter-quick-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .filter-panel { margin-top: 14px; }
+    .filter-domain-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 0 6px 0;
+      margin: 10px 0 4px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .filter-domain-header:first-child { margin-top: 0; }
+    .filter-domain-label { flex: 1; }
+    .filter-domain-check {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--blue);
+      cursor: pointer;
+    }
+    .filter-module-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0 5px 20px;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .filter-module-row:hover { background: #F8F9FA; border-radius: 6px; }
+    .filter-module-check {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--blue);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .filter-module-name { flex: 1; }
+    .filter-module-count { color: var(--muted); font-size: 0.78rem; white-space: nowrap; }
+    .stat-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
     /* ── Flash card answer reveal ────────────────── */
     .fc-divider { height: 1px; background: var(--border); margin: 16px 0; }
     .fc-explanation-text { font-size: 0.95rem; line-height: 1.65; color: var(--muted); }
@@ -388,14 +464,30 @@
 
       <div class="card">
         <div class="stat-row">
-          <span class="stat-label">Questions in bank</span>
-          <span class="stat-value" id="total-count">—</span>
+          <span class="stat-label">Questions selected</span>
+          <div>
+            <span class="stat-value" id="total-count">—</span>
+            <div class="stat-sub" id="total-sub"></div>
+          </div>
         </div>
-        <button type="button" class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
-        <button type="button" class="btn btn-secondary" onclick="startFlashCards()">&#128218; Flash Cards</button>
+        <button type="button" class="btn btn-primary" id="btn-start-quiz" onclick="startQuiz()">Start Quiz</button>
+        <button type="button" class="btn btn-secondary" id="btn-start-fc" onclick="startFlashCards()">&#128218; Flash Cards</button>
         <div id="resume-section" class="hidden">
           <button type="button" class="btn btn-secondary" onclick="resumeQuiz()" aria-label="Resume Quiz"><span aria-hidden="true">&#9654;</span> Resume Quiz</button>
           <p class="resume-info" id="resume-info"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="filter-header" onclick="toggleFilterPanel()" role="button" tabindex="0" aria-expanded="false" id="filter-toggle-btn" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleFilterPanel();}">
+          <span class="filter-header-icon" id="filter-header-icon">&#9658;</span>
+          <span class="filter-header-label">Select Modules</span>
+          <span class="filter-count-badge" id="filter-count-badge">All</span>
+          <button type="button" class="filter-quick-btn" onclick="event.stopPropagation(); selectAllModules()">All</button>
+          <button type="button" class="filter-quick-btn" onclick="event.stopPropagation(); selectNoneModules()">None</button>
+        </div>
+        <div id="filter-panel" class="filter-panel hidden">
+          <!-- populated by JS -->
         </div>
       </div>
 
@@ -590,6 +682,182 @@
     let userAnswers     = [];  // [{ topic, type, module, correct }]
     let answered        = false;
 
+    // All modules selected by default
+    const ALL_MODULES = DOMAIN_ORDER.flatMap(d => DOMAIN_MODULES[d] || []);
+    let selectedModules = new Set(ALL_MODULES);
+
+    // ── Module filter helpers ──────────────────────────────────────
+    function getFilteredQuestions() {
+      if (selectedModules.size === ALL_MODULES.length) return QUESTIONS;
+      return QUESTIONS.filter(q => selectedModules.has(q.module));
+    }
+
+    function updateFilterUI() {
+      const filtered = getFilteredQuestions();
+      const total    = QUESTIONS.length;
+      const sel      = filtered.length;
+
+      // Stat row
+      const countEl = document.getElementById('total-count');
+      const subEl   = document.getElementById('total-sub');
+      if (countEl) countEl.textContent = sel;
+      if (subEl)   subEl.textContent   = sel < total ? `of ${total} total` : '';
+
+      // Badge
+      const badge = document.getElementById('filter-count-badge');
+      if (badge) {
+        if (sel === total) {
+          badge.textContent = 'All';
+          badge.classList.remove('partial');
+        } else {
+          badge.textContent = `${sel} / ${total}`;
+          badge.classList.add('partial');
+        }
+      }
+
+      // Disable start buttons if nothing selected
+      const startBtn = document.getElementById('btn-start-quiz');
+      const fcBtn    = document.getElementById('btn-start-fc');
+      if (startBtn) startBtn.disabled = sel === 0;
+      if (fcBtn)    fcBtn.disabled    = sel === 0;
+
+      // Update domain-level checkboxes
+      DOMAIN_ORDER.forEach(domain => {
+        const mods      = DOMAIN_MODULES[domain] || [];
+        const allChecked = mods.every(m => selectedModules.has(m));
+        const someChecked = mods.some(m => selectedModules.has(m));
+        const domainCb = document.getElementById(`filter-domain-cb-${modId(domain)}`);
+        if (domainCb) {
+          domainCb.checked       = allChecked;
+          domainCb.indeterminate = !allChecked && someChecked;
+        }
+        // Update per-module checkboxes
+        mods.forEach(mod => {
+          const cb = document.getElementById(`filter-mod-cb-${modId(mod)}`);
+          if (cb) cb.checked = selectedModules.has(mod);
+        });
+      });
+    }
+
+    function toggleModuleCheck(mod) {
+      if (selectedModules.has(mod)) {
+        selectedModules.delete(mod);
+      } else {
+        selectedModules.add(mod);
+      }
+      updateFilterUI();
+    }
+
+    function toggleDomainCheck(domain) {
+      const mods = DOMAIN_MODULES[domain] || [];
+      const allChecked = mods.every(m => selectedModules.has(m));
+      mods.forEach(m => {
+        if (allChecked) selectedModules.delete(m);
+        else            selectedModules.add(m);
+      });
+      updateFilterUI();
+    }
+
+    function selectAllModules() {
+      ALL_MODULES.forEach(m => selectedModules.add(m));
+      updateFilterUI();
+    }
+
+    function selectNoneModules() {
+      selectedModules.clear();
+      updateFilterUI();
+    }
+
+    function toggleFilterPanel() {
+      const panel  = document.getElementById('filter-panel');
+      const icon   = document.getElementById('filter-header-icon');
+      const btn    = document.getElementById('filter-toggle-btn');
+      const hidden = panel.classList.toggle('hidden');
+      icon.classList.toggle('open', !hidden);
+      if (btn) btn.setAttribute('aria-expanded', String(!hidden));
+      if (!hidden && panel.children.length === 0) renderFilterPanel();
+    }
+
+    function renderFilterPanel() {
+      const panel = document.getElementById('filter-panel');
+      panel.innerHTML = '';
+
+      // Precompute question counts per module in one pass
+      const modQCount = {};
+      for (const q of QUESTIONS) {
+        modQCount[q.module] = (modQCount[q.module] || 0) + 1;
+      }
+
+      DOMAIN_ORDER.forEach(domain => {
+        const mods  = DOMAIN_MODULES[domain] || [];
+        const color = DOMAIN_COLOR[domain] || '#ccc';
+        const did   = modId(domain);
+
+        // Domain header row with checkbox
+        const domainRow = document.createElement('div');
+        domainRow.className = 'filter-domain-header';
+        domainRow.style.borderBottom = `1px solid ${color}33`;
+        domainRow.style.color = color;
+
+        const domainCb = document.createElement('input');
+        domainCb.type      = 'checkbox';
+        domainCb.className = 'filter-domain-check';
+        domainCb.id        = `filter-domain-cb-${did}`;
+        domainCb.checked   = mods.every(m => selectedModules.has(m));
+        domainCb.addEventListener('change', (e) => {
+          e.stopPropagation();
+          toggleDomainCheck(domain);
+        });
+        domainCb.addEventListener('click', e => e.stopPropagation());
+
+        const domainLabel = document.createElement('span');
+        domainLabel.className   = 'filter-domain-label';
+        domainLabel.textContent = domain;
+        domainLabel.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleDomainCheck(domain);
+        });
+
+        domainRow.appendChild(domainCb);
+        domainRow.appendChild(domainLabel);
+        panel.appendChild(domainRow);
+
+        // Module rows
+        mods.forEach(mod => {
+          const qCount = modQCount[mod] || 0;
+          const mid    = modId(mod);
+
+          const row = document.createElement('div');
+          row.className = 'filter-module-row';
+          row.addEventListener('click', () => toggleModuleCheck(mod));
+
+          const cb = document.createElement('input');
+          cb.type      = 'checkbox';
+          cb.className = 'filter-module-check';
+          cb.id        = `filter-mod-cb-${mid}`;
+          cb.checked   = selectedModules.has(mod);
+          cb.addEventListener('change', (e) => {
+            e.stopPropagation();
+            toggleModuleCheck(mod);
+          });
+          cb.addEventListener('click', e => e.stopPropagation());
+
+          const nameSpan = document.createElement('span');
+          nameSpan.className   = 'filter-module-name';
+          nameSpan.textContent = mod;
+
+          const countSpan = document.createElement('span');
+          countSpan.className   = 'filter-module-count';
+          countSpan.textContent = `${qCount} Q`;
+
+          row.appendChild(cb);
+          row.appendChild(nameSpan);
+          row.appendChild(countSpan);
+          panel.appendChild(row);
+        });
+      });
+    }
+
     // ── Utilities ──────────────────────────────────────────────────
     function shuffle(arr) {
       const a = [...arr];
@@ -678,7 +946,7 @@
     }
 
     function initHome() {
-      document.getElementById('total-count').textContent = QUESTIONS.length;
+      updateFilterUI();
 
       // Resume section
       const session       = loadSavedSession();
@@ -803,7 +1071,12 @@
 
     // ── Quiz Screen ────────────────────────────────────────────────
     function startQuiz() {
-      shuffledIndices = shuffle([...Array(QUESTIONS.length).keys()]);
+      if (getFilteredQuestions().length === 0) return;
+      const poolIndices = QUESTIONS.reduce((acc, q, i) => {
+        if (selectedModules.size === ALL_MODULES.length || selectedModules.has(q.module)) acc.push(i);
+        return acc;
+      }, []);
+      shuffledIndices = shuffle(poolIndices);
       shuffled    = shuffledIndices.map(i => QUESTIONS[i]);
       currentIdx  = 0;
       userAnswers = [];
@@ -1194,7 +1467,9 @@
     let fcRetry      = [];
 
     function startFlashCards() {
-      fcDeck       = shuffle([...QUESTIONS]);
+      const pool = getFilteredQuestions();
+      if (pool.length === 0) return;
+      fcDeck       = shuffle([...pool]);
       fcCurrentIdx = 0;
       fcKnown      = [];
       fcRetry      = [];
