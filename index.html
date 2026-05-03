@@ -238,7 +238,7 @@
     .ls-val   { font-size: 1rem; font-weight: 700; color: var(--text); }
     .ls-pct   { font-size: 0.75rem; color: var(--muted); }
 
-    /* ── Restart button ─────────────────────────── */
+    /* ── Restart / Home buttons ──────────────────── */
     .btn-restart {
       background: transparent;
       border: 1px solid var(--border);
@@ -251,6 +251,23 @@
       white-space: nowrap;
     }
     .btn-restart:hover { border-color: var(--red); color: var(--red); }
+    .btn-home-quiz {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .btn-home-quiz:hover { border-color: var(--blue); color: var(--blue); }
+    .quiz-meta-actions { display: flex; gap: 6px; align-items: center; }
+
+    /* ── Quiz navigation (prev / next) ───────────── */
+    .quiz-nav { display: flex; gap: 8px; margin-top: 10px; }
+    .quiz-nav .btn { margin-top: 0; flex: 1; }
 
     /* ── Domain breakdown bars ───────────────── */
     .domain-row { margin-bottom: 22px; }
@@ -314,6 +331,20 @@
     .module-bar-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
     .module-bar-fill  { height: 6px; border-radius: 99px; transition: width 0.4s ease; }
     .module-pct { color: var(--muted); white-space: nowrap; min-width: 32px; text-align: right; }
+    .module-train-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.68rem;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+    .module-train-btn:hover { border-color: var(--blue); color: var(--blue); }
 
     /* ── Focus bar ───────────────────────────────── */
     .focus-bar {
@@ -507,7 +538,10 @@
       <div class="quiz-meta">
         <span class="topic-badge badge-cc" id="topic-badge">Topic</span>
         <span class="progress-text" id="progress-text">Question 1 / 60</span>
-        <button type="button" class="btn-restart" onclick="confirmRestart()">&#8635; Restart</button>
+        <div class="quiz-meta-actions">
+          <button type="button" class="btn-home-quiz" onclick="goHome()">&#8962; Home</button>
+          <button type="button" class="btn-restart" onclick="confirmRestart()">&#8635; Restart</button>
+        </div>
       </div>
 
       <div class="live-scores hidden" id="live-scores">
@@ -533,7 +567,10 @@
         </div>
       </div>
 
-      <button type="button" class="btn btn-primary hidden" id="next-btn" onclick="nextQuestion()">Next Question</button>
+      <div class="quiz-nav">
+        <button type="button" class="btn btn-secondary hidden" id="prev-btn" onclick="prevQuestion()">&#8592; Previous</button>
+        <button type="button" class="btn btn-primary hidden" id="next-btn" onclick="nextQuestion()">Next Question</button>
+      </div>
 
       <div class="focus-bar hidden" id="focus-bar"></div>
 
@@ -1039,11 +1076,39 @@
         pctSpan.textContent   = `${p}%`;
       }
 
+      const quizBtn = document.createElement('button');
+      quizBtn.type = 'button';
+      quizBtn.className = 'module-train-btn';
+      quizBtn.textContent = '\u25B6 Quiz';
+      quizBtn.title = `Train quiz: ${mod}`;
+      quizBtn.addEventListener('click', () => trainModule(mod));
+
+      const fcBtn = document.createElement('button');
+      fcBtn.type = 'button';
+      fcBtn.className = 'module-train-btn';
+      fcBtn.textContent = '\uD83D\uDCDA Cards';
+      fcBtn.title = `Train flash cards: ${mod}`;
+      fcBtn.addEventListener('click', () => trainModuleFC(mod));
+
       row.appendChild(nameSpan);
       row.appendChild(scoreSpan);
       row.appendChild(barWrap);
       row.appendChild(pctSpan);
+      row.appendChild(quizBtn);
+      row.appendChild(fcBtn);
       return row;
+    }
+
+    function trainModule(mod) {
+      selectedModules = new Set([mod]);
+      updateFilterUI();
+      startQuiz();
+    }
+
+    function trainModuleFC(mod) {
+      selectedModules = new Set([mod]);
+      updateFilterUI();
+      startFlashCards();
     }
 
     function initModulePanel() {
@@ -1144,13 +1209,51 @@
         .map((opt, i) => `<button type="button" class="option-btn" onclick="selectAnswer(${i})">${opt}</button>`)
         .join('');
 
-      // Hide explanation + next button
-      document.getElementById('explanation-box').classList.add('hidden');
+      // Previous button
+      const prevBtn = document.getElementById('prev-btn');
+      if (currentIdx > 0) {
+        prevBtn.classList.remove('hidden');
+      } else {
+        prevBtn.classList.add('hidden');
+      }
+
       const nextBtn = document.getElementById('next-btn');
-      nextBtn.classList.add('hidden');
       nextBtn.textContent = currentIdx === total - 1 ? 'See Results' : 'Next Question';
 
-      answered = false;
+      // Check whether this question has already been answered
+      const prevAnswer = userAnswers[currentIdx] !== undefined ? userAnswers[currentIdx] : null;
+
+      if (prevAnswer !== null) {
+        // Already answered — restore the answer state for review
+        answered = true;
+        const optBtns = document.querySelectorAll('.option-btn');
+        optBtns.forEach((btn, i) => {
+          btn.disabled = true;
+          if (i === q.answer) btn.classList.add('correct');
+          else if (prevAnswer.selectedIdx !== undefined && i === prevAnswer.selectedIdx) btn.classList.add('wrong');
+        });
+
+        const verdict = document.getElementById('verdict-text');
+        verdict.textContent = prevAnswer.correct ? '✓ Correct!' : '✗ Incorrect';
+        verdict.className   = 'verdict ' + (prevAnswer.correct ? 'correct-v' : 'wrong-v');
+        document.getElementById('explanation-text').textContent = q.explanation;
+        const link = document.getElementById('learn-link');
+        const studyUrl = q.pageUrl || q.learnUrl;
+        if (studyUrl) {
+          link.href = studyUrl;
+          link.classList.remove('hidden');
+        } else {
+          link.classList.add('hidden');
+        }
+        document.getElementById('explanation-box').classList.remove('hidden');
+        nextBtn.classList.remove('hidden');
+      } else {
+        // Unanswered question — clean slate
+        answered = false;
+        document.getElementById('explanation-box').classList.add('hidden');
+        nextBtn.classList.add('hidden');
+      }
+
       saveSession();
     }
 
@@ -1258,7 +1361,7 @@
       const q       = shuffled[currentIdx];
       const correct = selectedIdx === q.answer;
 
-      userAnswers.push({ topic: q.topic, type: q.type || 'learning', module: q.module || '', correct });
+      userAnswers.push({ topic: q.topic, type: q.type || 'learning', module: q.module || '', correct, selectedIdx });
       updateLiveScores();
 
       // Style the buttons
@@ -1296,6 +1399,14 @@
         showResults();
       }
       window.scrollTo(0, 0);
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        renderQuestion();
+        window.scrollTo(0, 0);
+      }
     }
 
     function renderModuleBreakdown() {
