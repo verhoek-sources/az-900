@@ -480,6 +480,22 @@
     .fc-btn-got-it:hover { background: #0a6009; border-color: #0a6009; }
     .fc-btn-retry { flex: 1; background: transparent; color: var(--amber); border-color: var(--amber); }
     .fc-btn-retry:hover { background: #FFF8E6; }
+
+    /* ── Mark for retry button ───────────────────── */
+    .btn-mark-retry {
+      display: inline-block;
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .btn-mark-retry:hover { border-color: var(--amber); color: var(--amber); }
+    .btn-mark-retry.marked { border-color: var(--amber); color: var(--amber); background: #FFF8E6; }
   </style>
 </head>
 <body>
@@ -564,6 +580,7 @@
           <span class="verdict" id="verdict-text"></span>
           <span id="explanation-text"></span>
           <a id="learn-link" class="learn-link hidden" href="#" target="_blank" rel="noopener noreferrer">Learn more on Microsoft Learn ↗</a>
+          <button type="button" id="btn-mark-retry" class="btn-mark-retry hidden" onclick="toggleMarkForRetry()">&#128278; Mark for retry</button>
         </div>
       </div>
 
@@ -611,6 +628,7 @@
       </div>
 
       <button type="button" class="btn btn-primary" onclick="startQuiz()">Try Again</button>
+      <button type="button" class="btn btn-secondary hidden" id="btn-retry-failed" onclick="retryFailed()">&#8635; Retry Failed Questions</button>
       <button type="button" class="btn btn-secondary" onclick="goHome()">Home</button>
     </div>
   </div>
@@ -665,6 +683,7 @@
       </div>
 
       <button type="button" class="btn btn-primary" onclick="startFlashCards()">Try Again</button>
+      <button type="button" class="btn btn-secondary hidden" id="btn-retry-fc" onclick="retryFailedCards()">&#8635; Retry these cards</button>
       <button type="button" class="btn btn-secondary" onclick="goHome()">Home</button>
     </div>
   </div>
@@ -718,6 +737,7 @@
     let currentIdx      = 0;
     let userAnswers     = [];  // [{ topic, type, module, correct }]
     let answered        = false;
+    let markedIndices   = new Set();  // indices into shuffled[] marked for retry
 
     // All modules selected by default
     const ALL_MODULES = DOMAIN_ORDER.flatMap(d => DOMAIN_MODULES[d] || []);
@@ -952,6 +972,7 @@
           shuffledIndices,
           currentIdx,
           userAnswers,
+          markedIndices: [...markedIndices],
           questionsLength: QUESTIONS.length
         }));
       } catch (_) { /* localStorage unavailable */ }
@@ -1145,6 +1166,7 @@
       shuffled    = shuffledIndices.map(i => QUESTIONS[i]);
       currentIdx  = 0;
       userAnswers = [];
+      markedIndices = new Set();
       answered    = false;
       clearSession();
       document.getElementById('live-scores').classList.add('hidden');
@@ -1168,6 +1190,7 @@
       shuffled    = shuffledIndices.map(i => QUESTIONS[i]);
       currentIdx  = session.currentIdx;
       userAnswers = session.userAnswers;
+      markedIndices = new Set(session.markedIndices || []);
       answered    = false;
 
       document.getElementById('live-scores').classList.add('hidden');
@@ -1247,10 +1270,13 @@
         }
         document.getElementById('explanation-box').classList.remove('hidden');
         nextBtn.classList.remove('hidden');
+        document.getElementById('btn-mark-retry').classList.remove('hidden');
+        updateMarkButton();
       } else {
         // Unanswered question — clean slate
         answered = false;
         document.getElementById('explanation-box').classList.add('hidden');
+        document.getElementById('btn-mark-retry').classList.add('hidden');
         nextBtn.classList.add('hidden');
       }
 
@@ -1386,6 +1412,10 @@
         link.classList.add('hidden');
       }
       box.classList.remove('hidden');
+
+      // Show mark for retry button
+      document.getElementById('btn-mark-retry').classList.remove('hidden');
+      updateMarkButton();
 
       // Show next button (label already set in renderQuestion)
       document.getElementById('next-btn').classList.remove('hidden');
@@ -1568,6 +1598,17 @@
       renderModuleBreakdown();
       renderStudyThese();
 
+      // Retry failed / marked button
+      const failedPool = buildRetryPool();
+      const retryBtn = document.getElementById('btn-retry-failed');
+      if (failedPool.length > 0) {
+        const label = failedPool.length === 1 ? '1 question' : `${failedPool.length} questions`;
+        retryBtn.textContent = `\u21BA Retry Failed Questions (${label})`;
+        retryBtn.classList.remove('hidden');
+      } else {
+        retryBtn.classList.add('hidden');
+      }
+
       showScreen('screen-results');
     }
 
@@ -1696,6 +1737,15 @@
         }
       }
 
+      const retryFcBtn = document.getElementById('btn-retry-fc');
+      if (fcRetry.length > 0) {
+        const label = fcRetry.length === 1 ? '1 card' : `${fcRetry.length} cards`;
+        retryFcBtn.textContent = `\u21BA Retry these cards (${label})`;
+        retryFcBtn.classList.remove('hidden');
+      } else {
+        retryFcBtn.classList.add('hidden');
+      }
+
       showScreen('screen-fc-results');
     }
 
@@ -1721,6 +1771,82 @@
 
     function truncateQuestion(question, maxLength = 80) {
       return question.length > maxLength ? question.slice(0, maxLength) + '\u2026' : question;
+    }
+
+    // ── Mark for retry ─────────────────────────────────────────────
+    function toggleMarkForRetry() {
+      if (markedIndices.has(currentIdx)) {
+        markedIndices.delete(currentIdx);
+      } else {
+        markedIndices.add(currentIdx);
+      }
+      updateMarkButton();
+      saveSession();
+    }
+
+    function updateMarkButton() {
+      const btn = document.getElementById('btn-mark-retry');
+      if (!btn) return;
+      if (markedIndices.has(currentIdx)) {
+        btn.textContent = '\u2714 Marked for retry';
+        btn.classList.add('marked');
+      } else {
+        btn.textContent = '\uD83D\uDD16 Mark for retry';
+        btn.classList.remove('marked');
+      }
+    }
+
+    // ── Retry failed / marked questions ───────────────────────────
+    function buildRetryPool() {
+      const seen = new Set();
+      const pool = [];
+      userAnswers.forEach((a, i) => {
+        if (!a.correct && !seen.has(i)) { seen.add(i); pool.push(shuffled[i]); }
+      });
+      markedIndices.forEach(i => {
+        if (!seen.has(i) && shuffled[i]) { seen.add(i); pool.push(shuffled[i]); }
+      });
+      return pool;
+    }
+
+    function retryFailed() {
+      const pool = buildRetryPool();
+      if (pool.length === 0) return;
+      startRetryQuiz(pool);
+    }
+
+    function startRetryQuiz(questions) {
+      if (questions.length === 0) return;
+      const retryShuffled = shuffle([...questions]);
+      shuffledIndices = retryShuffled.map(q => QUESTIONS.indexOf(q));
+      shuffled    = retryShuffled;
+      currentIdx  = 0;
+      userAnswers = [];
+      markedIndices = new Set();
+      answered    = false;
+      clearSession();
+      document.getElementById('live-scores').classList.add('hidden');
+      const focusBar = document.getElementById('focus-bar');
+      focusBar.classList.add('hidden');
+      focusBar.classList.remove('on-track');
+      focusBar.textContent = '';
+      document.getElementById('module-panel').classList.remove('hidden');
+      document.getElementById('module-toggle').textContent = '\u25BC Modules';
+      document.getElementById('module-toggle').classList.remove('hidden');
+      initModulePanel();
+      showScreen('screen-quiz');
+      renderQuestion();
+    }
+
+    // ── Retry failed flash cards ───────────────────────────────────
+    function retryFailedCards() {
+      if (fcRetry.length === 0) return;
+      fcDeck       = shuffle([...fcRetry]);
+      fcCurrentIdx = 0;
+      fcKnown      = [];
+      fcRetry      = [];
+      showScreen('screen-flashcards');
+      renderFlashCard();
     }
 
     // ── Init ───────────────────────────────────────────────────────
