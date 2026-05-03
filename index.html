@@ -593,6 +593,8 @@
 
       <button type="button" class="btn btn-secondary hidden" id="btn-retry-failed-quiz" onclick="retryFailed()">&#8635; Retry Failed / Marked</button>
 
+      <button type="button" class="btn btn-secondary hidden" id="btn-continue-main-quiz" onclick="continueMainQuiz()">&#8617; Continue Main Quiz</button>
+
       <button type="button" class="btn-module-toggle hidden" id="module-toggle" onclick="toggleModulePanel()">&#9658; Modules</button>
       <div class="module-panel hidden" id="module-panel"></div>
     </div>
@@ -631,6 +633,7 @@
 
       <button type="button" class="btn btn-primary" onclick="startQuiz()">Try Again</button>
       <button type="button" class="btn btn-secondary hidden" id="btn-retry-failed" onclick="retryFailed()">&#8635; Retry Failed / Marked</button>
+      <button type="button" class="btn btn-secondary hidden" id="btn-continue-main-results" onclick="continueMainQuiz()">&#8617; Continue Main Quiz</button>
       <button type="button" class="btn btn-secondary" onclick="goHome()">Home</button>
     </div>
   </div>
@@ -740,6 +743,7 @@
     let userAnswers     = [];  // [{ topic, type, module, correct }]
     let answered        = false;
     let markedIndices   = new Set();  // indices into shuffled[] marked for retry
+    let mainQuizState   = null;       // saved state when a retry session is active
 
     // All modules selected by default
     const ALL_MODULES = DOMAIN_ORDER.flatMap(d => DOMAIN_MODULES[d] || []);
@@ -1160,6 +1164,7 @@
     // ── Quiz Screen ────────────────────────────────────────────────
     function startQuiz() {
       if (getFilteredQuestions().length === 0) return;
+      mainQuizState = null;
       const poolIndices = QUESTIONS.reduce((acc, q, i) => {
         if (selectedModules.size === ALL_MODULES.length || selectedModules.has(q.module)) acc.push(i);
         return acc;
@@ -1614,6 +1619,19 @@
         retryBtn.classList.add('hidden');
       }
 
+      // Continue main quiz button (shown when a retry session is active)
+      const continueBtn = document.getElementById('btn-continue-main-results');
+      if (continueBtn) {
+        if (mainQuizState !== null) {
+          const remaining = mainQuizState.shuffled.length - mainQuizState.userAnswers.length;
+          const label = remaining > 0 ? ` (${remaining} left)` : '';
+          continueBtn.textContent = `\u21A9 Continue Main Quiz${label}`;
+          continueBtn.classList.remove('hidden');
+        } else {
+          continueBtn.classList.add('hidden');
+        }
+      }
+
       showScreen('screen-results');
     }
 
@@ -1815,6 +1833,7 @@
       } else {
         btn.classList.add('hidden');
       }
+      updateContinueMainQuizButton();
     }
 
     // ── Retry failed / marked questions ───────────────────────────
@@ -1844,6 +1863,16 @@
 
     function startRetryQuiz(questions) {
       if (questions.length === 0) return;
+      // Save the current main quiz state so the user can return to it after retry
+      if (mainQuizState === null && shuffled.length > 0) {
+        mainQuizState = {
+          shuffled: [...shuffled],
+          shuffledIndices: [...shuffledIndices],
+          currentIdx,
+          userAnswers: [...userAnswers],
+          markedIndices: new Set(markedIndices)
+        };
+      }
       const retryShuffled = shuffle([...questions]);
       shuffledIndices = retryShuffled.map(q => QUESTIONS.indexOf(q));
       shuffled    = retryShuffled;
@@ -1863,8 +1892,53 @@
       initModulePanel();
       showScreen('screen-quiz');
       updateRetryButtonQuiz();
+      updateContinueMainQuizButton();
       renderQuestion();
     }
+    function updateContinueMainQuizButton() {
+      const btn = document.getElementById('btn-continue-main-quiz');
+      if (!btn) return;
+      if (mainQuizState !== null) {
+        const remaining = mainQuizState.shuffled.length - mainQuizState.userAnswers.length;
+        const label = remaining > 0 ? ` (${remaining} left)` : '';
+        btn.textContent = `\u21A9 Continue Main Quiz${label}`;
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
+      }
+    }
+
+    function continueMainQuiz() {
+      if (!mainQuizState) return;
+      shuffled        = mainQuizState.shuffled;
+      shuffledIndices = mainQuizState.shuffledIndices;
+      userAnswers     = mainQuizState.userAnswers;
+      markedIndices   = mainQuizState.markedIndices;
+      // Resume at the first unanswered question; if all done, show results
+      currentIdx      = Math.min(mainQuizState.userAnswers.length, mainQuizState.shuffled.length - 1);
+      mainQuizState   = null;
+      answered        = false;
+      clearSession();
+      document.getElementById('live-scores').classList.add('hidden');
+      const focusBar = document.getElementById('focus-bar');
+      focusBar.classList.add('hidden');
+      focusBar.classList.remove('on-track');
+      focusBar.textContent = '';
+      document.getElementById('module-panel').classList.remove('hidden');
+      document.getElementById('module-toggle').textContent = '\u25BC Modules';
+      document.getElementById('module-toggle').classList.remove('hidden');
+      initModulePanel();
+      showScreen('screen-quiz');
+      updateLiveScores();
+      updateRetryButtonQuiz();
+      updateContinueMainQuizButton();
+      if (userAnswers.length >= shuffled.length) {
+        showResults();
+      } else {
+        renderQuestion();
+      }
+    }
+
     function retryFailedCards() {
       if (fcRetry.length === 0) return;
       fcDeck       = shuffle([...fcRetry]);
